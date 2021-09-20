@@ -115,8 +115,7 @@ public class DropDownItemManager {
     }
     
     public boolean deleteItem(String itemId) throws CustomException {
-        try {
-            
+        try {            
             itemId = InputValidatorUtil.validateStringProperty("Drop Down Item Id", itemId);
             if (!this.dropDownItemRepository.isExistsById(itemId)) {
                 throw new DoesNotExistException("Drop Down Item does not exists.Drop Down Item Id : " + itemId);

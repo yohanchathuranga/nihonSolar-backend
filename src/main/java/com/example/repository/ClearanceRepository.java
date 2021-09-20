@@ -3,6 +3,7 @@ package com.example.repository;
 import com.example.customrepositories.ClearanceRepositoryCustom;
 import com.example.entity.DOClearance;
 import java.util.ArrayList;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
@@ -27,4 +28,8 @@ public interface ClearanceRepository extends JpaRepository<DOClearance, String>,
 
     @Query(value = "select * from clearance cl where cl.check_date >= ?1 and cl.check_date <= ?2 and cl.status = 'NEW'", nativeQuery = true)
     ArrayList<DOClearance> getNotificationList(long start, long end);
+    
+    @Query(value = "select * from clearance where project_id = ?1", nativeQuery = true)
+    List<DOClearance> getItemsByProjectId(String id);
+
 }

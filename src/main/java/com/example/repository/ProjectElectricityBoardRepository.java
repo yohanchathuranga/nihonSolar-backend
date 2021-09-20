@@ -1,7 +1,6 @@
 package com.example.repository;
 
 import com.example.entity.DOProjectElectricityBoard;
-import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
@@ -21,5 +20,7 @@ public interface ProjectElectricityBoardRepository extends JpaRepository<DOProje
     @Query(value = "select case when count(peb.id) > 0 then 'true' else 'false' end from electricity_board_process peb where peb.id = ?1", nativeQuery = true)
     boolean isExistsById(String id);
 
+    @Query(value = "select * from electricity_board_process where project_id = ?1 limit 1", nativeQuery = true)
+    DOProjectElectricityBoard getItemsByProjectId(String projectId);
 
 }

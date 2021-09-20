@@ -3,6 +3,7 @@ package com.example.repository;
 import com.example.customrepositories.StatusCheckRepositoryCustom;
 import com.example.entity.DOStatusCheck;
 import java.util.ArrayList;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
@@ -27,4 +28,8 @@ public interface StatusCheckRepository extends JpaRepository<DOStatusCheck, Stri
 
     @Query(value = "select * from status_check s  where s.actual_date >= ?1 and s.actual_date <= ?2 and s.status = 'NEW'", nativeQuery = true)
     ArrayList<DOStatusCheck> getNotificationList(long start, long end);
+    
+    @Query(value = "select * from status_check where project_id = ?1", nativeQuery = true)
+    List<DOStatusCheck> getItemsByProjectId(String projectId);
+
 }

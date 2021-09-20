@@ -226,4 +226,23 @@ public class DateTimeUtil {
         return year;
     }
 
+    public static long getNextWeekDayTime(long epochTime) throws DoesNotExistException {
+
+        ZoneId timeZoneId = null;
+        try {
+            //TimeZone timeZone = TimeZone.getTimeZone(DataUtil.TIME_ZONE);
+            //timeZoneId = timeZone.toZoneId();
+            timeZoneId = ZoneId.of(DataUtil.TIME_ZONE);
+        } catch (Exception e) {
+            throw new DoesNotExistException("Time zone does not exist. Time zone : " + DataUtil.TIME_ZONE);
+        }
+        LocalDate localDate = Instant.ofEpochSecond(epochTime).atZone(timeZoneId).toLocalDate();
+        Instant instant = localDate.atStartOfDay().atZone(timeZoneId).toInstant();
+        long timeInMillis = instant.toEpochMilli();
+        long endEpochTime = timeInMillis / 1000L;
+        endEpochTime = endEpochTime + (7 * 24 * 3600);
+        return endEpochTime;
+
+    }
+
 }

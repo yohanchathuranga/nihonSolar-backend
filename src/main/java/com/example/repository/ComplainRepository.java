@@ -2,6 +2,7 @@ package com.example.repository;
 
 import com.example.customrepositories.ComplainRepositoryCustom;
 import com.example.entity.DOComplain;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
@@ -23,6 +24,9 @@ public interface ComplainRepository extends JpaRepository<DOComplain, String>,Co
 
     @Query(value = "select case when count(c.id) > 0 then 'true' else 'false' end from complain c where c.id = ?1", nativeQuery = true)
     boolean isExistsById(String id);
+
+    @Query(value = "select * from complain where project_id = ?1", nativeQuery = true)
+    List<DOComplain> getItemsByProjectId(String id);
 
 
 }

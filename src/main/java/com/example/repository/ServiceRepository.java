@@ -2,6 +2,7 @@ package com.example.repository;
 
 import com.example.customrepositories.ServiceRepositoryCustom;
 import com.example.entity.DOService;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
@@ -24,5 +25,7 @@ public interface ServiceRepository extends JpaRepository<DOService, String>,Serv
     @Query(value = "select case when count(s.id) > 0 then 'true' else 'false' end from service s where s.id = ?1", nativeQuery = true)
     boolean isExistsById(String id);
 
+    @Query(value = "select * from service where project_id = ?1", nativeQuery = true)
+    List<DOService> getItemsByProjectId(String projectId);
 
 }

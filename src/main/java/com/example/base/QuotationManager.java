@@ -7,10 +7,12 @@ package com.example.base;
 
 import com.example.dataaccess.DAODataUtil;
 import com.example.entity.DOCountRequest;
+import com.example.entity.DOCustomerFeedback;
 import com.example.entity.DOListCountResult;
 import com.example.entity.DOListRequest;
 import com.example.entity.DOProject;
 import com.example.entity.DOQuotation;
+import com.example.repository.CustomerFeedbackRepository;
 import com.example.repository.ProjectRepository;
 import com.example.repository.QuotationRepository;
 import com.example.repository.UserRepository;
@@ -19,7 +21,6 @@ import com.example.util.DateTimeUtil;
 import com.example.util.InputValidatorUtil;
 import com.yohan.exceptions.CustomException;
 import com.yohan.exceptions.DoesNotExistException;
-import com.yohan.exceptions.InvalidInputException;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +38,13 @@ public class QuotationManager {
     private QuotationRepository quotationRepository;
     private ProjectRepository projectRepository;
     private UserRepository userRepository;
+    private CustomerFeedbackRepository customerFeedbackRepository;
     private final DAODataUtil dataUtil;
 
-    public QuotationManager(ProjectRepository projectRepository, UserRepository userRepository, DAODataUtil dataUtil) {
+    public QuotationManager(ProjectRepository projectRepository, UserRepository userRepository, CustomerFeedbackRepository customerFeedbackRepository, DAODataUtil dataUtil) {
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
+        this.customerFeedbackRepository = customerFeedbackRepository;
         this.dataUtil = dataUtil;
     }
 
@@ -88,6 +91,7 @@ public class QuotationManager {
 
     }
 
+    @Transactional
     public DOQuotation createQuotation(DOQuotation quotation) throws CustomException {
         try {
 
@@ -118,6 +122,23 @@ public class QuotationManager {
 
             if (!this.projectRepository.isExistsById(projectId)) {
                 throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);
+            }
+
+            List<DOQuotation> quotations = this.quotationRepository.getItemsByProjectId(quotation.getProjectId());
+            if (quotations.isEmpty()) {
+                long nextWeek = currentTime;
+                DOCustomerFeedback customerFeedback = new DOCustomerFeedback();
+                customerFeedback.setProjectId(projectId);
+                customerFeedback.setCustomerId(userId);
+                customerFeedback.setStatus(DataUtil.FEEDBACK_STATE_NEW);
+                customerFeedback.setDeleted(false);
+                for (int i = 1; i < 5; i++) {
+                    customerFeedback.setId(UUID.randomUUID().toString());
+                    customerFeedback.setWeekNo(i);
+                    customerFeedback.setActualDate(DateTimeUtil.getNextWeekDayTime(nextWeek));
+                    customerFeedbackRepository.save(customerFeedback);
+                    nextWeek = DateTimeUtil.getNextWeekDayTime(nextWeek);
+                }
             }
 
             String id = UUID.randomUUID().toString();
@@ -178,7 +199,7 @@ public class QuotationManager {
             if (!this.quotationRepository.isExistsById(quotationId)) {
                 throw new DoesNotExistException("Quotation does not exists.Quotation Id : " + quotationId);
             }
-            
+
             if (!this.userRepository.isExistsById(userId)) {
                 throw new DoesNotExistException("User does not exists. User Id : " + userId);
             }
@@ -197,31 +218,31 @@ public class QuotationManager {
         }
 
     }
-    
+
     @Transactional
-     public boolean finalizeQuotation(String quotationId) throws CustomException {
+    public boolean finalizeQuotation(String quotationId) throws CustomException {
         try {
 
             quotationId = InputValidatorUtil.validateStringProperty("Quotation Id", quotationId);
             if (!this.quotationRepository.isExistsById(quotationId)) {
                 throw new DoesNotExistException("Quotation does not exists. Quotation Id : " + quotationId);
             }
-            
+
             DOQuotation quotation = this.quotationRepository.getItemsById(quotationId);
-            
+
             List<DOQuotation> quotations = this.quotationRepository.getItemsByProjectId(quotation.getProjectId());
             for (DOQuotation quotation1 : quotations) {
-                if(!quotation.getId().equals(quotation1.getId())){
+                if (!quotation.getId().equals(quotation1.getId())) {
                     this.projectRepository.setStatus(DataUtil.QUOTATION_STATE_DISCARD, quotation1.getId());
                 }
-            }        
-            
+            }
+
             DOProject project = projectRepository.getById(quotation.getProjectId());
             project.setSystemPrice(quotation.getSystemPrice());
             project.setOutstandingPayment(quotation.getSystemPrice());
             project.setStatus(DataUtil.PROJECT_STATE_APPROVED);
             this.projectRepository.save(project);
-            
+
             quotation.setStatus(DataUtil.QUOTATION_STATE_FINALIZED);
             quotation.setFinalized(true);
             this.quotationRepository.save(quotation);

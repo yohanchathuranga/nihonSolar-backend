@@ -5,6 +5,7 @@ import com.example.entity.DOCountRequest;
 import com.example.entity.DOListCountResult;
 import com.example.entity.DOListRequest;
 import com.example.entity.DOProject;
+import com.example.entity.DOProjectDetails;
 import com.yohan.exceptions.CustomException;
 import java.util.List;
 
@@ -20,13 +21,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
-
 @RestController
 @RequestMapping("/projects")
 public class ProjectController {
 
-   private final ProjectManager projectManager;
+    private final ProjectManager projectManager;
 
     @Autowired
     public ProjectController(ProjectManager projectManager) {
@@ -42,7 +41,7 @@ public class ProjectController {
             return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
         }
     }
-    
+
     @PostMapping("/count")
     public ResponseEntity<DOListCountResult> getProjectCount(@RequestBody DOCountRequest countRequest) {
         try {
@@ -81,12 +80,22 @@ public class ProjectController {
             return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
         }
     }
-    
-     // update project
+
+    // update project
     @PutMapping
     public ResponseEntity<DOProject> updateProject(@RequestBody DOProject project) {
         try {
             return new ResponseEntity(this.projectManager.updateProject(project), HttpStatus.OK);
+        } catch (CustomException ex) {
+            return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // get project by id
+    @GetMapping("/details/{id}")
+    public ResponseEntity<DOProjectDetails> getProjectDetailsById(@PathVariable(value = "id") String projectId) {
+        try {
+            return new ResponseEntity(this.projectManager.getProjectDetailsById(projectId), HttpStatus.OK);
         } catch (CustomException ex) {
             return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
         }

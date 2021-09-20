@@ -3,6 +3,7 @@ package com.example.repository;
 import com.example.customrepositories.CustomerFeedbackRepositoryCustom;
 import com.example.entity.DOCustomerFeedback;
 import java.util.ArrayList;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
@@ -26,5 +27,9 @@ public interface CustomerFeedbackRepository extends JpaRepository<DOCustomerFeed
 
     @Query(value = "select * from customer_feedback cf where cf.actual_date >= ?1 and cf.actual_date <= ?2 and cf.status = 'NEW'", nativeQuery = true)
     ArrayList<DOCustomerFeedback> getNotificationList(long start, long end);
+    
+    @Query(value = "select * from customer_feedback where project_id = ?1", nativeQuery = true)
+    List<DOCustomerFeedback> getItemsByProjectId(String projectId);
+
 
 }

@@ -2,6 +2,7 @@ package com.example.repository;
 
 import com.example.customrepositories.PaymentRepositoryCustom;
 import com.example.entity.DOPayment;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
@@ -21,5 +22,7 @@ public interface PaymentRepository extends JpaRepository<DOPayment, String>,Paym
     @Query(value = "select case when count(p.id) > 0 then 'true' else 'false' end from payment p where p.id = ?1", nativeQuery = true)
     boolean isExistsById(String id);
 
+    @Query(value = "select * from payment where project_id = ?1", nativeQuery = true)
+    List<DOPayment> getItemsByProjectId(String projectId);
 
 }

@@ -24,5 +24,6 @@ public interface SiteVisitRepository extends JpaRepository<DOSiteVisit, String>,
     @Query(value = "select case when count(s.id) > 0 then 'true' else 'false' end from site_visit s where s.id = ?1", nativeQuery = true)
     boolean isExistsById(String id);
 
-
+    @Query(value = "select * from site_visit where project_id = ?1 limit 1", nativeQuery = true)
+    DOSiteVisit getItemsByProjectId(String projectId);
 }

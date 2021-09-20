@@ -24,5 +24,7 @@ public interface BankLoanRepository extends JpaRepository<DOBankLoan, String>,Ba
     @Query(value = "select case when count(bl.id) > 0 then 'true' else 'false' end from bank_loan bl where bl.id = ?1", nativeQuery = true)
     boolean isExistsById(String id);
 
+    @Query(value = "select * from bank_loan where project_id = ?1 limit 1", nativeQuery = true)
+    DOBankLoan getItemsByProjectId(String projectId);
 
 }
