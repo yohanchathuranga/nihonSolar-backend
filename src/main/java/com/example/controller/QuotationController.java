@@ -90,4 +90,14 @@ public class QuotationController {
             return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
         }
     }
+    
+    // get quotation by id
+    @PostMapping("/finalize/{id}")
+    public ResponseEntity<DOQuotation> finalizeQuotation(@PathVariable(value = "id") String quotationId) {
+        try {
+            return new ResponseEntity(this.quotationManager.finalizeQuotation(quotationId), HttpStatus.OK);
+        } catch (CustomException ex) {
+            return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
+        }
+    }
 }

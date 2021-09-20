@@ -193,7 +193,7 @@ public class NotificationManager {
 
     }
 
-    public void processNotification() {
+    public void processNotification() throws CustomException {
         try {
             long currentTime = DateTimeUtil.getCurrentTime();
             long dayStartTime = DateTimeUtil.getDayStartEpochTime(currentTime);
@@ -207,7 +207,8 @@ public class NotificationManager {
             clearanceNotification(clearanceList);
             statusCheckNotification(statusCheckList);
 
-        } catch (Exception e) {
+        } catch (CustomException ex) {
+            throw ex;
         }
     }
 
@@ -228,7 +229,8 @@ public class NotificationManager {
                 emailSender.sendEmail(mailSender);
             }
 
-        } catch (Exception e) {
+        } catch (Exception ex) {
+            throw ex;
         }
     }
 
@@ -249,7 +251,8 @@ public class NotificationManager {
                 emailSender.sendEmail(mailSender);
             }
 
-        } catch (Exception e) {
+        } catch (Exception ex) {
+            throw ex;
         }
     }
 
@@ -270,7 +273,8 @@ public class NotificationManager {
                 emailSender.sendEmail(mailSender);
             }
 
-        } catch (Exception e) {
+        } catch (Exception ex) {
+            throw ex;
         }
     }
 

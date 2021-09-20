@@ -1,5 +1,6 @@
 package com.example.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,6 +47,7 @@ public class DODropDownItem implements Serializable {
         this.data = data;
     }
 
+    @JsonIgnore
     public boolean isDeleted() {
         return deleted;
     }

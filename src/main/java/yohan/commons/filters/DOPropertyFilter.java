@@ -1,4 +1,4 @@
-package com.yohan.commons.filters;
+package yohan.commons.filters;
 
 /**
  *

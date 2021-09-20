@@ -25,6 +25,6 @@ public interface StatusCheckRepository extends JpaRepository<DOStatusCheck, Stri
     @Query(value = "select case when count(s.id) > 0 then 'true' else 'false' end from status_check s where s.id = ?1", nativeQuery = true)
     boolean isExistsById(String id);
 
-    @Query(value = "select * from status_check s  where s.actual_date > = ?1 and s.actual_date < = ?2 and s.status = 'NEW'", nativeQuery = true)
+    @Query(value = "select * from status_check s  where s.actual_date >= ?1 and s.actual_date <= ?2 and s.status = 'NEW'", nativeQuery = true)
     ArrayList<DOStatusCheck> getNotificationList(long start, long end);
 }

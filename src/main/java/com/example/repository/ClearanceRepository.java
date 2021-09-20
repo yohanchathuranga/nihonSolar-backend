@@ -25,6 +25,6 @@ public interface ClearanceRepository extends JpaRepository<DOClearance, String>,
     @Query(value = "select case when count(cl.id) > 0 then 'true' else 'false' end from clearance cl where cl.id = ?1", nativeQuery = true)
     boolean isExistsById(String id);
 
-    @Query(value = "select * from clearance cl where cl.actual_date > = ?1 and cl.actual_date < = ?2 and cl.status = 'NEW'", nativeQuery = true)
+    @Query(value = "select * from clearance cl where cl.check_date >= ?1 and cl.check_date <= ?2 and cl.status = 'NEW'", nativeQuery = true)
     ArrayList<DOClearance> getNotificationList(long start, long end);
 }

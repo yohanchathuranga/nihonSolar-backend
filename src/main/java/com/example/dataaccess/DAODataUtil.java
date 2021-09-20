@@ -5,8 +5,8 @@
  */
 package com.example.dataaccess;
 
-import com.yohan.commons.filters.DOPropertyFilter;
-import com.yohan.commons.filters.FilterUtil;
+import yohan.commons.filters.DOPropertyFilter;
+import yohan.commons.filters.FilterUtil;
 import com.yohan.exceptions.CustomException;
 import com.yohan.exceptions.DatabaseException;
 import java.util.ArrayList;

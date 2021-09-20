@@ -1,5 +1,6 @@
 package com.example.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -18,6 +19,7 @@ public class DOQuotation implements Serializable {
     private String inventerType;
     private String panelType;
     private String acDcSpd;
+    private int systemPrice;
     private boolean finalized;
     private String status;
     private boolean deleted;
@@ -25,7 +27,7 @@ public class DOQuotation implements Serializable {
     public DOQuotation() {
     }
 
-    public DOQuotation(String id, String projectId, String userId, long issuedDate, String sendMode, String inventerType, String panelType, String acDcSpd, boolean finalized, String status, boolean deleted) {
+    public DOQuotation(String id, String projectId, String userId, long issuedDate, String sendMode, String inventerType, String panelType, String acDcSpd, int systemPrice, boolean finalized, String status, boolean deleted) {
         this.id = id;
         this.projectId = projectId;
         this.userId = userId;
@@ -34,10 +36,13 @@ public class DOQuotation implements Serializable {
         this.inventerType = inventerType;
         this.panelType = panelType;
         this.acDcSpd = acDcSpd;
+        this.systemPrice = systemPrice;
         this.finalized = finalized;
         this.status = status;
         this.deleted = deleted;
     }
+
+    
 
     public String getId() {
         return id;
@@ -119,12 +124,21 @@ public class DOQuotation implements Serializable {
         this.status = status;
     }
 
+    @JsonIgnore
     public boolean isDeleted() {
         return deleted;
     }
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public int getSystemPrice() {
+        return systemPrice;
+    }
+
+    public void setSystemPrice(int systemPrice) {
+        this.systemPrice = systemPrice;
     }
 
 }

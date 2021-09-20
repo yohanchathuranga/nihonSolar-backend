@@ -36,4 +36,6 @@ public interface ProjectRepository extends JpaRepository<DOProject, String>,Proj
 //    @Query(value = "select role from employee where user_id = 1?", nativeQuery = true)
 //    DOProject getEmployee(String userId);
 
+    @Query(value = "select * from project p where p.id = ?1", nativeQuery = true)
+    DOProject getById(String id);
 }

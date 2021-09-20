@@ -10,11 +10,10 @@ import com.example.entity.DOCountRequest;
 import com.example.entity.DOListCountResult;
 import com.example.entity.DOListRequest;
 import com.example.entity.DOPayment;
+import com.example.entity.DOProject;
 import com.example.repository.ProjectRepository;
 import com.example.repository.PaymentRepository;
 import com.example.repository.UserRepository;
-import com.example.util.DataUtil;
-import com.example.util.DateTimeUtil;
 import com.example.util.InputValidatorUtil;
 import com.yohan.exceptions.CustomException;
 import com.yohan.exceptions.DoesNotExistException;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -86,6 +86,7 @@ public class PaymentManager {
 
     }
 
+    @Transactional
     public DOPayment createPayment(DOPayment payment) throws CustomException {
         try {
 
@@ -117,6 +118,11 @@ public class PaymentManager {
             payment.setDeleted(false);
 
             DOPayment paymentCreated = this.paymentRepository.save(payment);
+            
+            DOProject project = projectRepository.getById(projectId);
+            project.setOutstandingPayment(project.getOutstandingPayment() - amount);
+            this.projectRepository.save(project);
+            
             return paymentCreated;
         } catch (CustomException ex) {
             throw ex;
@@ -124,6 +130,7 @@ public class PaymentManager {
 
     }
 
+    @Transactional
     public boolean deletePayment(String paymentId) throws CustomException {
         try {
 

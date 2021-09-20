@@ -24,7 +24,7 @@ public interface CustomerFeedbackRepository extends JpaRepository<DOCustomerFeed
     @Query(value = "select case when count(cf.id) > 0 then 'true' else 'false' end from customer_feedback cf where cf.id = ?1", nativeQuery = true)
     boolean isExistsById(String id);
 
-    @Query(value = "select * from customer_feedback cf where cf.actual_date > = ?1 and cf.actual_date < = ?2 and cf.status = 'NEW'", nativeQuery = true)
+    @Query(value = "select * from customer_feedback cf where cf.actual_date >= ?1 and cf.actual_date <= ?2 and cf.status = 'NEW'", nativeQuery = true)
     ArrayList<DOCustomerFeedback> getNotificationList(long start, long end);
 
 }

@@ -1,5 +1,5 @@
 
-package com.yohan.commons.filters;
+package yohan.commons.filters;
 
 /**
  *
@@ -10,5 +10,6 @@ public enum FilterOperator {
     EQUAL,
     NOT_EQUAL,
     LESS_THAN,
-    GREATER_THAN
+    GREATER_THAN,
+    NOT_LIKE
 }

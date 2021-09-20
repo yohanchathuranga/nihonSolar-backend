@@ -51,6 +51,6 @@ public interface UserRepository extends JpaRepository<DOUser, String>,UserReposi
     @Query(value = "select role from employee where user_id = 1?", nativeQuery = true)
     DOUser getEmployee(String userId);
 
-    @Query(value = "select * users u where u.occupation = ?1 and u.type = 'EMPLOYEE'", nativeQuery = true)
+    @Query(value = "select * from users u where u.occupation = ?1 and u.type = 'EMPLOYEE'", nativeQuery = true)
     ArrayList<DOUser> getEmployeeByRole(String role);
 }

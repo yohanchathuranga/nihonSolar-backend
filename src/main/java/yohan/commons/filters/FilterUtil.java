@@ -1,4 +1,4 @@
-package com.yohan.commons.filters;
+package yohan.commons.filters;
 
 import com.yohan.exceptions.CustomException;
 import com.yohan.exceptions.InvalidInputException;
@@ -28,6 +28,14 @@ public class FilterUtil {
                     if (!(pFilter.getValue() == null || pFilter.getValue().toString().isEmpty())) {
                         //  pClause += " like '%" + pFilter.getValue() + "%' ";
                         pClause = " lower(" + pClause + ") like LOWER('%" + pFilter.getValue() + "%') ";
+                    } else {
+                        pClause = null;
+                    }
+                    break;
+                case NOT_LIKE:
+                    if (!(pFilter.getValue() == null || pFilter.getValue().toString().isEmpty())) {
+                        //  pClause += " like '%" + pFilter.getValue() + "%' ";
+                        pClause = " lower(" + pClause + ") not like LOWER('%" + pFilter.getValue() + "%') ";
                     } else {
                         pClause = null;
                     }

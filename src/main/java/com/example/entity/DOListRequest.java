@@ -1,6 +1,6 @@
 package com.example.entity;
 
-import com.yohan.commons.filters.DOPropertyFilter;
+import yohan.commons.filters.DOPropertyFilter;
 import java.util.ArrayList;
 
 /**

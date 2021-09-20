@@ -1,5 +1,6 @@
 package com.example.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -79,6 +80,7 @@ public class DOPayment implements Serializable {
         this.recordedBy = recordedBy;
     }
 
+    @JsonIgnore
     public boolean isDeleted() {
         return deleted;
     }

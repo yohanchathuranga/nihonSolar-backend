@@ -9,6 +9,7 @@ import com.example.dataaccess.DAODataUtil;
 import com.example.entity.DOCountRequest;
 import com.example.entity.DOListCountResult;
 import com.example.entity.DOListRequest;
+import com.example.entity.DOProject;
 import com.example.entity.DOQuotation;
 import com.example.repository.ProjectRepository;
 import com.example.repository.QuotationRepository;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -190,6 +192,40 @@ public class QuotationManager {
 
             DOQuotation quotationCreated = this.quotationRepository.save(quotation);
             return quotationCreated;
+        } catch (CustomException ex) {
+            throw ex;
+        }
+
+    }
+    
+    @Transactional
+     public boolean finalizeQuotation(String quotationId) throws CustomException {
+        try {
+
+            quotationId = InputValidatorUtil.validateStringProperty("Quotation Id", quotationId);
+            if (!this.quotationRepository.isExistsById(quotationId)) {
+                throw new DoesNotExistException("Quotation does not exists. Quotation Id : " + quotationId);
+            }
+            
+            DOQuotation quotation = this.quotationRepository.getItemsById(quotationId);
+            
+            List<DOQuotation> quotations = this.quotationRepository.getItemsByProjectId(quotation.getProjectId());
+            for (DOQuotation quotation1 : quotations) {
+                if(!quotation.getId().equals(quotation1.getId())){
+                    this.projectRepository.setStatus(DataUtil.QUOTATION_STATE_DISCARD, quotation1.getId());
+                }
+            }        
+            
+            DOProject project = projectRepository.getById(quotation.getProjectId());
+            project.setSystemPrice(quotation.getSystemPrice());
+            project.setOutstandingPayment(quotation.getSystemPrice());
+            project.setStatus(DataUtil.PROJECT_STATE_APPROVED);
+            this.projectRepository.save(project);
+            
+            quotation.setStatus(DataUtil.QUOTATION_STATE_FINALIZED);
+            quotation.setFinalized(true);
+            this.quotationRepository.save(quotation);
+            return true;
         } catch (CustomException ex) {
             throw ex;
         }

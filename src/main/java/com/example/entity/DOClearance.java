@@ -1,5 +1,6 @@
 package com.example.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -15,6 +16,7 @@ public class DOClearance implements Serializable {
     private String areaOffice;
     private String contactNo;
     private String officerName;
+    private long checkDate;
     private long submitDate;
     private long collectDate;
     private String status;
@@ -23,17 +25,20 @@ public class DOClearance implements Serializable {
     public DOClearance() {
     }
 
-    public DOClearance(String id, String projectId, String areaOffice, String contactNo, String officerName, long submitDate, long collectDate, String status, boolean deleted) {
+    public DOClearance(String id, String projectId, String areaOffice, String contactNo, String officerName, long checkDate, long submitDate, long collectDate, String status, boolean deleted) {
         this.id = id;
         this.projectId = projectId;
         this.areaOffice = areaOffice;
         this.contactNo = contactNo;
         this.officerName = officerName;
+        this.checkDate = checkDate;
         this.submitDate = submitDate;
         this.collectDate = collectDate;
         this.status = status;
         this.deleted = deleted;
     }
+
+    
 
     public String getId() {
         return id;
@@ -99,6 +104,7 @@ public class DOClearance implements Serializable {
         this.status = status;
     }
 
+    @JsonIgnore
     public boolean isDeleted() {
         return deleted;
     }
@@ -106,5 +112,15 @@ public class DOClearance implements Serializable {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
+
+    public long getCheckDate() {
+        return checkDate;
+    }
+
+    public void setCheckDate(long checkDate) {
+        this.checkDate = checkDate;
+    }
+    
+    
 
 }
