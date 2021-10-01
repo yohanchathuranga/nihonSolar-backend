@@ -1,6 +1,8 @@
-package com.yohan.mysql.db;
+package yohan.mysql.db;
 
-import com.yohan.exceptions.CustomException;
+import yohan.exceptions.CustomException;
+
+
 
 /**
  *

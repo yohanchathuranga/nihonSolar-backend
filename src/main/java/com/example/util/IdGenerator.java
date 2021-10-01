@@ -7,9 +7,9 @@ package com.example.util;
 
 import com.example.entity.DOSysNextId;
 import com.example.repository.SysNextIdRepository;
-import com.yohan.exceptions.DoesNotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import yohan.exceptions.DoesNotExistException;
 
 /**
  *

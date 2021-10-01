@@ -18,12 +18,14 @@ public interface SiteVisitRepository extends JpaRepository<DOSiteVisit, String>,
     @Query(value = "update site_visit s set s.deleted = ?1 where s.id = ?2", nativeQuery = true)
     int deleteSiteVisit(boolean deleted, String id);
     
+    @Transactional
+    @Modifying
     @Query(value = "update site_vist s set s.status = ?1 where s.id = ?2", nativeQuery = true)
     int setStatus(String status, String id);
 
-    @Query(value = "select case when count(s.id) > 0 then 'true' else 'false' end from site_visit s where s.id = ?1", nativeQuery = true)
+    @Query(value = "select case when count(s.id) > 0 then 'true' else 'false' end from site_visit s where s.id = ?1 and deleted = false", nativeQuery = true)
     boolean isExistsById(String id);
 
-    @Query(value = "select * from site_visit where project_id = ?1 limit 1", nativeQuery = true)
+    @Query(value = "select * from site_visit where project_id = ?1 and deleted = false limit 1", nativeQuery = true)
     DOSiteVisit getItemsByProjectId(String projectId);
 }

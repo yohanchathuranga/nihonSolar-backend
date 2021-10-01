@@ -6,7 +6,7 @@ import com.example.entity.DODropDownItem;
 import com.example.entity.DODropDownItem.DODropDownListItem;
 import com.example.entity.DOListCountResult;
 import com.example.entity.DOListRequest;
-import com.yohan.exceptions.CustomException;
+import yohan.exceptions.CustomException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +85,15 @@ public class DropDownItemsController {
     public ResponseEntity<DODropDownItem> deleteItem(@PathVariable("id") String itemId) {
         try {
             return new ResponseEntity(this.dropDownManager.deleteItem(itemId), HttpStatus.OK);
+        } catch (CustomException ex) {
+            return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
+        }
+    }
+    
+    @GetMapping("/type/type_list")
+    public ResponseEntity<List<String>> getTypeList() {
+        try {
+            return new ResponseEntity(this.dropDownManager.getTypeList(), HttpStatus.OK);
         } catch (CustomException ex) {
             return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
         }

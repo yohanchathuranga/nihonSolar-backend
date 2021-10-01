@@ -1,10 +1,10 @@
 package yohan.commons.filters;
 
-import com.yohan.exceptions.CustomException;
-import com.yohan.exceptions.InvalidInputException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import yohan.exceptions.CustomException;
+import yohan.exceptions.InvalidInputException;
 
 public class FilterUtil {
 

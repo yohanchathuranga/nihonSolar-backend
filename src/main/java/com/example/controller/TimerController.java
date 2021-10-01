@@ -6,7 +6,7 @@
 package com.example.controller;
 
 import com.example.base.NotificationManager;
-import com.yohan.exceptions.CustomException;
+import yohan.exceptions.CustomException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

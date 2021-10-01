@@ -2,7 +2,7 @@
 //
 //import com.yohan.mysql.db.DatabaseConfig;
 //import com.yohan.mysql.db.IDbFactory;
-//import com.yohan.exceptions.CustomException;
+//import yohan.exceptions.CustomException;
 //import yohan.db.mysql.MySqlDbFactory;
 //
 ///**

@@ -16,6 +16,7 @@ public class DataUtil {
 
     public static String USER_TYPE_EMPLOYEE = "EMPLOYEE";
     public static String USER_TYPE_CUSTOMER = "CUSTOMER";
+    public static String USER_TYPE_ADMIN = "ADMIN";
 
     public static String PROJECT_STATE_NEW = "NEW";
     public static String PROJECT_STATE_PENDING = "PENDING";

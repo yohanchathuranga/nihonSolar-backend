@@ -20,16 +20,18 @@ public interface StatusCheckRepository extends JpaRepository<DOStatusCheck, Stri
     @Query(value = "update status_check s set s.deleted = ?1 where s.id = ?2", nativeQuery = true)
     int deleteStatusCheck(boolean deleted, String id);
     
+    @Transactional
+    @Modifying
     @Query(value = "update status_check s set s.status = ?1 where s.id = ?2", nativeQuery = true)
     int setStatus(String status, String id);
 
-    @Query(value = "select case when count(s.id) > 0 then 'true' else 'false' end from status_check s where s.id = ?1", nativeQuery = true)
+    @Query(value = "select case when count(s.id) > 0 then 'true' else 'false' end from status_check s where s.id = ?1 and deleted = false", nativeQuery = true)
     boolean isExistsById(String id);
 
-    @Query(value = "select * from status_check s  where s.actual_date >= ?1 and s.actual_date <= ?2 and s.status = 'NEW'", nativeQuery = true)
+    @Query(value = "select * from status_check s  where s.actual_date >= ?1 and s.actual_date <= ?2 and s.status = 'NEW' and deleted = false", nativeQuery = true)
     ArrayList<DOStatusCheck> getNotificationList(long start, long end);
     
-    @Query(value = "select * from status_check where project_id = ?1", nativeQuery = true)
+    @Query(value = "select * from status_check where project_id = ?1 and deleted = false", nativeQuery = true)
     List<DOStatusCheck> getItemsByProjectId(String projectId);
 
 }

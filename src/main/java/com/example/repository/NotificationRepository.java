@@ -18,10 +18,12 @@ public interface NotificationRepository extends JpaRepository<DONotification, St
     @Query(value = "update notification n set n.deleted = ?1 where n.id = ?2", nativeQuery = true)
     int deleteNotification(boolean deleted, String id);
     
+    @Transactional
+    @Modifying
     @Query(value = "update notification n set n.status = ?1 where n.id = ?2", nativeQuery = true)
     int setStatus(String status, String id);
 
-    @Query(value = "select case when count(n.id) > 0 then 'true' else 'false' end from notification n where n.id = ?1", nativeQuery = true)
+    @Query(value = "select case when count(n.id) > 0 then 'true' else 'false' end from notification n where n.id = ?1 and deleted = false", nativeQuery = true)
     boolean isExistsById(String id);
 
 

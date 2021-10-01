@@ -5,11 +5,12 @@
  */
 package yohan.db.mysql;
 
-import com.yohan.mysql.db.IDbSession;
-import com.yohan.exceptions.CustomException;
-import com.yohan.exceptions.DatabaseException;
+
 import java.sql.Connection;
 import java.sql.SQLException;
+import yohan.exceptions.CustomException;
+import yohan.exceptions.DatabaseException;
+import yohan.mysql.db.IDbSession;
 
 /**
  *

@@ -26,13 +26,14 @@ public class DOProject implements Serializable {
     private long connectionFileSubmitDate;
     private long customerAppDate;
     private long insuranceAgreementDate;
+    private long createdDate;
     private String status;
     private boolean deleted;
 
     public DOProject() {
     }
 
-    public DOProject(String id, String userId, String maketingOfficer, String contactMode, String electricityProvider, int avgElectricityBill, String connectionType, String paymentMethod, double systemVolume, int systemPrice, int outstandingPayment, long systemInstallationDate, long connectionFileSubmitDate, long customerAppDate, long insuranceAgreementDate, String status, boolean deleted) {
+    public DOProject(String id, String userId, String maketingOfficer, String contactMode, String electricityProvider, int avgElectricityBill, String connectionType, String paymentMethod, double systemVolume, int systemPrice, int outstandingPayment, long systemInstallationDate, long connectionFileSubmitDate, long customerAppDate, long insuranceAgreementDate, long createdDate, String status, boolean deleted) {
         this.id = id;
         this.userId = userId;
         this.maketingOfficer = maketingOfficer;
@@ -48,9 +49,11 @@ public class DOProject implements Serializable {
         this.connectionFileSubmitDate = connectionFileSubmitDate;
         this.customerAppDate = customerAppDate;
         this.insuranceAgreementDate = insuranceAgreementDate;
+        this.createdDate = createdDate;
         this.status = status;
         this.deleted = deleted;
     }
+
     
 
     public String getId() {
@@ -189,6 +192,13 @@ public class DOProject implements Serializable {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
-    
 
+    public long getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(long createdDate) {
+        this.createdDate = createdDate;
+    }
+    
 }

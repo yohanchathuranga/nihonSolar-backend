@@ -16,6 +16,8 @@ public interface SysNextIdRepository extends JpaRepository<DOSysNextId, String> 
     @Query(value = "update sys_next_id sn set sn.next_id = ?1 where sn.type = ?2", nativeQuery = true)
     int setNextId(int id, String type);
 
+    @Transactional
+    @Modifying
     @Query(value = "update sys_next_id sn set sn.status = ?1 where sn.id = ?2", nativeQuery = true)
     int setStatus(String status, String id);
 

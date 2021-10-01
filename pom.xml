@@ -8,7 +8,7 @@
         <version>2.3.2.RELEASE</version>
         <relativePath/>
     </parent>
-    <groupId>com.example</groupId>
+    <groupId>com.nihonsolar</groupId>
     <artifactId>nihon-backend</artifactId>
     <version>0.0.1</version>
 

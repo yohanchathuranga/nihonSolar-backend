@@ -28,8 +28,8 @@ import com.example.util.DataUtil;
 import com.example.util.DateTimeUtil;
 import com.example.util.IdGenerator;
 import com.example.util.InputValidatorUtil;
-import com.yohan.exceptions.CustomException;
-import com.yohan.exceptions.DoesNotExistException;
+import yohan.exceptions.CustomException;
+import yohan.exceptions.DoesNotExistException;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,30 +130,10 @@ public class ProjectManager {
             if (!this.userRepository.isExistsById(userId)) {
                 throw new DoesNotExistException("User does not exists. User Id : " + userId);
             }
-//            String contactNo = InputValidatorUtil.validateStringProperty("Contact No", project.getContactNo());
-//            project.setContact_no(contactNo);
-//
-//            String email = InputValidatorUtil.validateStringProperty("Email", project.getEmail());
-//            project.setEmail(email);
-//
-//            String nic = InputValidatorUtil.validateStringProperty("NIC", project.getNic());
-//            project.setNic(nic);
-//
-//            String address = InputValidatorUtil.validateStringProperty("Address", project.getAddress());
-//            project.setStatus(address);
-//
-//            String type = InputValidatorUtil.validateStringProperty("Project Type", project.getType());
-//            project.setType(type);
-//
-//            String password = InputValidatorUtil.validateStringProperty("Password", project.getPassword());
-//            project.setPassword(password);
-//
-//            if (!type.toUpperCase().equals(DataUtil.USER_TYPE_CUSTOMER) && !type.toUpperCase().equals(DataUtil.USER_TYPE_EMPLOYEE)) {
-//                throw new InvalidInputException("Invalid type. Type :" + type);
-//            }
-//            String occupation = InputValidatorUtil.validateStringProperty("Occupation", project.getOccupation());
-//            project.setOccupation(occupation);
 
+            long currentDate = DateTimeUtil.getCurrentTime();
+            project.setCreatedDate(currentDate);
+            
             String id = idGenerator.generateId("project", DateTimeUtil.getCurrentTime());
             
             project.setId(id);
@@ -220,7 +200,9 @@ public class ProjectManager {
 //            String occupation = InputValidatorUtil.validateStringProperty("Occupation", project.getOccupation());
 //            project.setOccupation(occupation);
 
-            project.setStatus(DataUtil.PROJECT_STATE_NEW);
+            DOProject projectExists = this.projectRepository.getById(projectId);
+            project.setCreatedDate(projectExists.getCreatedDate());
+            project.setStatus(projectExists.getStatus());
             project.setDeleted(false);
             
             DOProject projectCreated = this.projectRepository.save(project);

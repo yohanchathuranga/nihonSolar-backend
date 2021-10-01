@@ -19,8 +19,8 @@ import com.example.repository.UserRepository;
 import com.example.util.DataUtil;
 import com.example.util.DateTimeUtil;
 import com.example.util.InputValidatorUtil;
-import com.yohan.exceptions.CustomException;
-import com.yohan.exceptions.DoesNotExistException;
+import yohan.exceptions.CustomException;
+import yohan.exceptions.DoesNotExistException;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -208,11 +208,10 @@ public class QuotationManager {
                 throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);
             }
 
-            quotation.setStatus(DataUtil.QUOTATION_STATE_NEW);
             quotation.setDeleted(false);
 
-            DOQuotation quotationCreated = this.quotationRepository.save(quotation);
-            return quotationCreated;
+            DOQuotation quotationUpdated = this.quotationRepository.save(quotation);
+            return quotationUpdated;
         } catch (CustomException ex) {
             throw ex;
         }

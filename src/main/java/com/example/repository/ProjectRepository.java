@@ -18,10 +18,12 @@ public interface ProjectRepository extends JpaRepository<DOProject, String>,Proj
     @Query(value = "update project p set p.deleted = ?1 where p.id = ?2", nativeQuery = true)
     int deleteProject(boolean deleted, String id);
     
+    @Transactional
+    @Modifying
     @Query(value = "update project p set p.status = ?1 where p.id = ?2", nativeQuery = true)
     int setStatus(String status, String id);
 
-    @Query(value = "select case when count(p.id) > 0 then 'true' else 'false' end from project p where p.id = ?1", nativeQuery = true)
+    @Query(value = "select case when count(p.id) > 0 then 'true' else 'false' end from project p where p.id = ?1 and deleted = false and deleted = false", nativeQuery = true)
     boolean isExistsById(String id);
     
 //    @Query(value = "insert into customer (user_id,occupation) values (?1,?2)", nativeQuery = true)
@@ -36,6 +38,6 @@ public interface ProjectRepository extends JpaRepository<DOProject, String>,Proj
 //    @Query(value = "select role from employee where user_id = 1?", nativeQuery = true)
 //    DOProject getEmployee(String userId);
 
-    @Query(value = "select * from project p where p.id = ?1", nativeQuery = true)
+    @Query(value = "select * from project p where p.id = ?1 and deleted = false", nativeQuery = true)
     DOProject getById(String id);
 }

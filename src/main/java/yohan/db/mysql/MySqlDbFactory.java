@@ -10,7 +10,7 @@
 //import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 //import com.yohan.mysql.db.IDbFactory;
 //import com.yohan.mysql.db.IDbSession;
-//import com.yohan.exceptions.CustomException;
+//import yohan.exceptions.CustomException;
 //import java.sql.Connection;
 //import java.sql.DriverManager;
 //import javax.naming.InitialContext;

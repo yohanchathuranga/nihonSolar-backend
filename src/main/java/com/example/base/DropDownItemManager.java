@@ -13,9 +13,9 @@ import com.example.entity.DOListCountResult;
 import com.example.entity.DOListRequest;
 import com.example.repository.DropDownItemRepository;
 import com.example.util.InputValidatorUtil;
-import com.yohan.exceptions.AlreadyExistException;
-import com.yohan.exceptions.CustomException;
-import com.yohan.exceptions.DoesNotExistException;
+import yohan.exceptions.AlreadyExistException;
+import yohan.exceptions.CustomException;
+import yohan.exceptions.DoesNotExistException;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,10 +93,10 @@ public class DropDownItemManager {
     public DODropDownItem createItem(DODropDownItem dropDownItem) throws CustomException {
         try {
             String type = InputValidatorUtil.validateStringProperty("Drop Down Item Type", dropDownItem.getType());
-            dropDownItem.setType(type);
+            dropDownItem.setType(type.toUpperCase());
             
             String data = InputValidatorUtil.validateStringProperty("Drop Down Item Data", dropDownItem.getData());
-            dropDownItem.setData(data);
+            dropDownItem.setData(data.toUpperCase());
             
             if (this.dropDownItemRepository.isExistsDataAndType(data, type)) {
                 throw new AlreadyExistException("Item already exists.");
@@ -126,6 +126,10 @@ public class DropDownItemManager {
             throw ex;
         }
         
+    }
+    
+    public List<String> getTypeList() throws CustomException {
+        return this.dropDownItemRepository.getTypeList();
     }
     
 }

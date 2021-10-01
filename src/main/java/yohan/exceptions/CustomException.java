@@ -1,4 +1,4 @@
-package com.yohan.exceptions;
+package yohan.exceptions;
 
 /**
  *
@@ -12,6 +12,7 @@ public class CustomException extends Exception {
     final static int DOES_NOT_EXIST = 512;
     final static int UNKNOWN_FAILED = 513;
     final static int SERVER_FAILED = 510;
+    final static int LOGIN_FAILED = 514;
 
     int errorNo;
     String errorMsg;

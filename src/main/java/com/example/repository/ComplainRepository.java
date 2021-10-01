@@ -19,13 +19,15 @@ public interface ComplainRepository extends JpaRepository<DOComplain, String>,Co
     @Query(value = "update complain c set c.deleted = ?1 where c.id = ?2", nativeQuery = true)
     int deleteComplain(boolean deleted, String id);
     
+    @Transactional
+    @Modifying
     @Query(value = "update complain c set c.status = ?1 where c.id = ?2", nativeQuery = true)
     int setStatus(String status, String id);
 
-    @Query(value = "select case when count(c.id) > 0 then 'true' else 'false' end from complain c where c.id = ?1", nativeQuery = true)
+    @Query(value = "select case when count(c.id) > 0 then 'true' else 'false' end from complain c where c.id = ?1 and deleted = false", nativeQuery = true)
     boolean isExistsById(String id);
 
-    @Query(value = "select * from complain where project_id = ?1", nativeQuery = true)
+    @Query(value = "select * from complain where project_id = ?1 and deleted = false", nativeQuery = true)
     List<DOComplain> getItemsByProjectId(String id);
 
 

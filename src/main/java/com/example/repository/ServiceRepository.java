@@ -19,13 +19,15 @@ public interface ServiceRepository extends JpaRepository<DOService, String>,Serv
     @Query(value = "update service s set s.deleted = ?1 where s.id = ?2", nativeQuery = true)
     int deleteService(boolean deleted, String id);
     
+    @Transactional
+    @Modifying
     @Query(value = "update service s set s.status = ?1 where s.id = ?2", nativeQuery = true)
     int setStatus(String status, String id);
 
-    @Query(value = "select case when count(s.id) > 0 then 'true' else 'false' end from service s where s.id = ?1", nativeQuery = true)
+    @Query(value = "select case when count(s.id) > 0 then 'true' else 'false' end from service s where s.id = ?1 and deleted = false", nativeQuery = true)
     boolean isExistsById(String id);
 
-    @Query(value = "select * from service where project_id = ?1", nativeQuery = true)
+    @Query(value = "select * from service where project_id = ?1 and deleted = false", nativeQuery = true)
     List<DOService> getItemsByProjectId(String projectId);
 
 }

@@ -2,10 +2,14 @@ package com.example.controller;
 
 import com.example.base.UserManager;
 import com.example.entity.DOCountRequest;
+import com.example.entity.DOForgotPassword;
+import com.example.entity.DOForgotPasswordRequest;
 import com.example.entity.DOListCountResult;
 import com.example.entity.DOListRequest;
+import com.example.entity.DOLoginRequest;
+import com.example.entity.DOResetPasswordRequest;
 import com.example.entity.DOUser;
-import com.yohan.exceptions.CustomException;
+import yohan.exceptions.CustomException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -76,6 +81,56 @@ public class UserController {
     public ResponseEntity<DOUser> deleteUser(@PathVariable("id") String userId) {
         try {
             return new ResponseEntity(this.userManager.deleteUser(userId), HttpStatus.OK);
+        } catch (CustomException ex) {
+            return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
+        }
+    }
+    
+    // create user
+    @PutMapping
+    public ResponseEntity<DOUser> updateUser(@RequestBody DOUser user) {
+        try {
+            return new ResponseEntity(this.userManager.updateUser(user), HttpStatus.OK);
+        } catch (CustomException ex) {
+            return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
+        }
+    }
+    
+    @PostMapping("/login")
+    public ResponseEntity<DOUser> userLogin(@RequestBody DOLoginRequest loginRequest) {
+        try {
+            return new ResponseEntity(this.userManager.userLogin(loginRequest), HttpStatus.OK);
+        } catch (CustomException ex) {
+            return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
+        }
+    }
+    
+        
+    @PostMapping("/forgot_password_request")
+    public ResponseEntity<DOUser> forgotPasswordRequest(@RequestBody DOForgotPasswordRequest forgotPasswordRequest) {
+        try {
+            this.userManager.forgotPasswordRequest(forgotPasswordRequest);
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (CustomException ex) {
+            return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
+        }
+    }
+    
+    @PostMapping("/forgot_password")
+    public ResponseEntity<DOUser> forgotPassword(@RequestBody DOForgotPassword forgotPassword) {
+        try {
+            this.userManager.forgotPassword(forgotPassword);
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (CustomException ex) {
+            return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
+        }
+    }
+    
+    @PostMapping("/reset_password")
+    public ResponseEntity<DOUser> resetPassword(@RequestBody DOResetPasswordRequest resetPasswordRequest) {
+        try {
+            this.userManager.resetPassword(resetPasswordRequest);
+            return new ResponseEntity(HttpStatus.OK);
         } catch (CustomException ex) {
             return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
         }

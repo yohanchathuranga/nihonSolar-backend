@@ -15,12 +15,12 @@ public interface ProjectElectricityBoardRepository extends JpaRepository<DOProje
     @Transactional
     @Modifying
     @Query(value = "update electricity_board_process peb set peb.deleted = ?1 where peb.id = ?2", nativeQuery = true)
-    int setStatus(boolean deleted, String id);
+    int delete(boolean deleted, String id);
 
-    @Query(value = "select case when count(peb.id) > 0 then 'true' else 'false' end from electricity_board_process peb where peb.id = ?1", nativeQuery = true)
+    @Query(value = "select case when count(peb.id) > 0 then 'true' else 'false' end from electricity_board_process peb where peb.id = ?1 and deleted = false", nativeQuery = true)
     boolean isExistsById(String id);
 
-    @Query(value = "select * from electricity_board_process where project_id = ?1 limit 1", nativeQuery = true)
+    @Query(value = "select * from electricity_board_process where project_id = ?1 and deleted = false limit 1", nativeQuery = true)
     DOProjectElectricityBoard getItemsByProjectId(String projectId);
 
 }

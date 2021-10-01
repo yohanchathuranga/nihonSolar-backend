@@ -19,10 +19,10 @@ public interface PaymentRepository extends JpaRepository<DOPayment, String>,Paym
     @Query(value = "update payment p set p.deleted = ?1 where p.id = ?2", nativeQuery = true)
     int deletePayment(boolean deleted, String id);
 
-    @Query(value = "select case when count(p.id) > 0 then 'true' else 'false' end from payment p where p.id = ?1", nativeQuery = true)
+    @Query(value = "select case when count(p.id) > 0 then 'true' else 'false' end from payment p where p.id = ?1 and deleted = false", nativeQuery = true)
     boolean isExistsById(String id);
 
-    @Query(value = "select * from payment where project_id = ?1", nativeQuery = true)
+    @Query(value = "select * from payment where project_id = ?1 and deleted = false", nativeQuery = true)
     List<DOPayment> getItemsByProjectId(String projectId);
 
 }
