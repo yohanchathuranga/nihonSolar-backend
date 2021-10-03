@@ -118,4 +118,13 @@ public class ProjectController {
             return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
         }
     }
+    
+    @GetMapping("/approve/{id}")
+    public ResponseEntity<DOProject> approveProject(@PathVariable(value = "id") String projectId) {
+        try {
+            return new ResponseEntity(this.projectManager.approve(projectId), HttpStatus.OK);
+        } catch (CustomException ex) {
+            return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
+        }
+    }
 }

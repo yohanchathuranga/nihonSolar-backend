@@ -35,10 +35,13 @@ public interface StatusCheckRepository extends JpaRepository<DOStatusCheck, Stri
 
     @Query(value = "select * from status_check where project_id = ?1 and type = ?2 and deleted = false", nativeQuery = true)
     List<DOStatusCheck> getItemsByProjectIdAndType(String projectId, String type);
-    
+
     @Transactional
     @Modifying
     @Query(value = "update status_check s set s.deleted = ?1 where s.project_id = ?2", nativeQuery = true)
     int deleteByProjectId(boolean deleted, String projectId);
+
+    @Query(value = "select case when count(s.id) > 0 then 'true' else 'false' end from status_check s where s.project_id = ?1 and type = ?2 and check_no = ?3 and deleted = false", nativeQuery = true)
+    boolean isExistsByProjectIdTypeAndWeekNo(String projectId, String type, int weekNo);
 
 }

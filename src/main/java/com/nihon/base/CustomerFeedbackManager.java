@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import yohan.exceptions.AlreadyExistException;
 
 /**
  *
@@ -117,11 +118,14 @@ public class CustomerFeedbackManager {
             if (!this.projectRepository.isExistsByIdandUserId(projectId, customerId)) {
                 throw new DoesNotExistException("Project does not belongs to customer. Project Id : " + projectId);
             }
-            
+
             if (!this.projectRepository.checkProjectAlive(projectId)) {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
             }
 
+            if (customerFeedbackRepository.isExistsByProjectIdAndWeekNo(projectId, weekNo)) {
+                throw new AlreadyExistException("Already exists for week");
+            }
             String id = UUID.randomUUID().toString();
 
             customerFeedback.setId(id);
@@ -157,23 +161,22 @@ public class CustomerFeedbackManager {
             customerFeedback.setId(customerFeedbackId);
 
             DOCustomerFeedback customerFeedbackExists = customerFeedbackRepository.findById(customerFeedbackId).get();
-            
+
             String projectId = customerFeedbackExists.getProjectId();
 
             String customerId = customerFeedbackExists.getCustomerId();
 
-            int weekNo = customerFeedback.getWeekNo();
-            if (weekNo < 1) {
-                throw new InvalidInputException("Invalid Week No.Week No : " + weekNo);
-            }
-            customerFeedback.setWeekNo(weekNo);
-
-            long acctualDate = customerFeedback.getActualDate();
-            if (acctualDate < 1) {
-                throw new InvalidInputException("Invalid Actual Date. Actual Date : " + acctualDate);
-            }
-            customerFeedback.setActualDate(acctualDate);
-
+//            int weekNo = customerFeedback.getWeekNo();
+//            if (weekNo < 1) {
+//                throw new InvalidInputException("Invalid Week No.Week No : " + weekNo);
+//            }
+//            customerFeedback.setWeekNo(weekNo);
+//
+//            long acctualDate = customerFeedback.getActualDate();
+//            if (acctualDate < 1) {
+//                throw new InvalidInputException("Invalid Actual Date. Actual Date : " + acctualDate);
+//            }
+//            customerFeedback.setActualDate(acctualDate);
             if (!this.customerFeedbackRepository.isExistsById(customerFeedbackId)) {
                 throw new DoesNotExistException("Customer Feedback does not exists.Customer Feedback Id : " + customerFeedbackId);
             }
@@ -192,6 +195,8 @@ public class CustomerFeedbackManager {
 
             customerFeedback.setProjectId(projectId);
             customerFeedback.setCustomerId(customerId);
+            customerFeedback.setActualDate(customerFeedbackExists.getActualDate());
+            customerFeedback.setWeekNo(customerFeedbackExists.getWeekNo());
             customerFeedback.setDeleted(false);
 
             DOCustomerFeedback customerFeedbackCreated = this.customerFeedbackRepository.save(customerFeedback);

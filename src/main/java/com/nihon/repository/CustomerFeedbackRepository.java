@@ -29,7 +29,7 @@ public interface CustomerFeedbackRepository extends JpaRepository<DOCustomerFeed
 
     @Query(value = "select * from customer_feedback cf where cf.actual_date >= ?1 and cf.actual_date <= ?2 and cf.status = 'NEW' and deleted = false", nativeQuery = true)
     ArrayList<DOCustomerFeedback> getNotificationList(long start, long end);
-    
+
     @Query(value = "select * from customer_feedback where project_id = ?1 and deleted = false", nativeQuery = true)
     List<DOCustomerFeedback> getItemsByProjectId(String projectId);
 
@@ -37,4 +37,7 @@ public interface CustomerFeedbackRepository extends JpaRepository<DOCustomerFeed
     @Modifying
     @Query(value = "update customer_feedback cf set cf.deleted = ?1 where cf.project_id = ?2", nativeQuery = true)
     int deleteByProjectId(boolean deleted, String projectId);
+
+    @Query(value = "select case when count(cf.id) > 0 then 'true' else 'false' end from customer_feedback cf where cf.project_id = ?1 and week_no = ?2 and deleted = false", nativeQuery = true)
+    boolean isExistsByProjectIdAndWeekNo(String projectId, int weekNo);
 }

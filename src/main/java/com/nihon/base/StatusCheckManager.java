@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import yohan.exceptions.AlreadyExistException;
 
 /**
  *
@@ -120,6 +121,10 @@ public class StatusCheckManager {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
             }
             
+            if(statusCheckRepository.isExistsByProjectIdTypeAndWeekNo(projectId, type, checkNo)){
+                throw new AlreadyExistException("Already exists");
+            }
+            
             String id = UUID.randomUUID().toString();
 
             statusCheck.setId(id);
@@ -159,24 +164,24 @@ public class StatusCheckManager {
             
             String projectId = statusCheckExists.getProjectId();
 
-            String type = InputValidatorUtil.validateStringProperty("Type", statusCheck.getType());
-            statusCheck.setType(type);
-            
-            if(!type.equals(DataUtil.STATUS_CHECK_TYPE_BANK_LOAN) && !type.equals(DataUtil.STATUS_CHECK_TYPE_CLEARANCE)){
-                throw new InvalidInputException("Invalid type");
-            }
-
-            int checkNo = statusCheck.getCheckNo();
-            if (checkNo <= 0) {
-                throw new InvalidInputException("Invalid Ckeck No. Check No:" + checkNo);
-            }
-            statusCheck.setCheckNo(checkNo);
-            
-            long actualDate = statusCheck.getActualDate();
-            if (actualDate <= 0) {
-                throw new InvalidInputException("Invalid Actual Date. Actual Date:" + actualDate);
-            }
-            statusCheck.setActualDate(actualDate);
+//            String type = InputValidatorUtil.validateStringProperty("Type", statusCheck.getType());
+//            statusCheck.setType(type);
+//            
+//            if(!type.equals(DataUtil.STATUS_CHECK_TYPE_BANK_LOAN) && !type.equals(DataUtil.STATUS_CHECK_TYPE_CLEARANCE)){
+//                throw new InvalidInputException("Invalid type");
+//            }
+//
+//            int checkNo = statusCheck.getCheckNo();
+//            if (checkNo <= 0) {
+//                throw new InvalidInputException("Invalid Ckeck No. Check No:" + checkNo);
+//            }
+//            statusCheck.setCheckNo(checkNo);
+//            
+//            long actualDate = statusCheck.getActualDate();
+//            if (actualDate <= 0) {
+//                throw new InvalidInputException("Invalid Actual Date. Actual Date:" + actualDate);
+//            }
+//            statusCheck.setActualDate(actualDate);
 
 
             if (!this.projectRepository.isExistsById(projectId)) {
@@ -195,6 +200,9 @@ public class StatusCheckManager {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
             }
 
+            statusCheck.setType(statusCheckExists.getType());
+            statusCheck.setActualDate(statusCheckExists.getActualDate());
+            statusCheck.setCheckNo(statusCheckExists.getCheckNo());;
             statusCheck.setProjectId(projectId);
             statusCheck.setDeleted(false);
 

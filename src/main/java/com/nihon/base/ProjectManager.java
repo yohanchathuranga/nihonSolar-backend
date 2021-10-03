@@ -7,6 +7,7 @@ package com.nihon.base;
 
 import com.nihon.dataaccess.DAODataUtil;
 import com.nihon.entity.DOCountRequest;
+import com.nihon.entity.DOCustomerFeedback;
 import com.nihon.entity.DOListCountResult;
 import com.nihon.entity.DOListRequest;
 import com.nihon.entity.DOProject;
@@ -306,6 +307,29 @@ public class ProjectManager {
 
             DOProject projectCancelled = this.projectRepository.save(project);
             return projectCancelled;
+        } catch (CustomException ex) {
+            throw ex;
+        }
+
+    }
+    
+    public DOProject approve(String projectId) throws CustomException {
+        try {
+
+            projectId = InputValidatorUtil.validateStringProperty("Project Id", projectId);
+
+            if (!this.projectRepository.isExistsById(projectId)) {
+                throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);
+            }
+
+            List<DOCustomerFeedback> customerFeedbacks = customerFeedbackRepository.getItemsByProjectId(projectId);
+            for (DOCustomerFeedback customerFeedback : customerFeedbacks) {
+                if(customerFeedback.getStatus().equals(DataUtil.FEEDBACK_STATE_NEW)){
+                    customerFeedbackRepository.setStatus(DataUtil.STATE_DISCARD, customerFeedback.getId());
+                }
+            }
+            DOProject project = projectRepository.findById(projectId).get();
+            return project;
         } catch (CustomException ex) {
             throw ex;
         }
