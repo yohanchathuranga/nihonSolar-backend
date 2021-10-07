@@ -90,4 +90,14 @@ public class ComplainController {
             return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
         }
     }
+    
+    //resolve complain
+    @GetMapping("/resolve/{id}")
+    public ResponseEntity<DOComplain> resolveComplain(@PathVariable(value = "id") String complainId) {
+        try {
+            return new ResponseEntity(this.complainManager.resolveComplain(complainId), HttpStatus.OK);
+        } catch (CustomException ex) {
+            return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
+        }
+    }
 }

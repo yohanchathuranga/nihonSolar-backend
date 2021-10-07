@@ -30,19 +30,19 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ServiceManager {
-    
+
     @Autowired
     private ServiceRepository serviceRepository;
     private ProjectRepository projectRepository;
     private UserRepository userRepository;
     private final DAODataUtil dataUtil;
-    
+
     public ServiceManager(ProjectRepository projectRepository, UserRepository userRepository, DAODataUtil dataUtil) {
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
         this.dataUtil = dataUtil;
     }
-    
+
     public List<DOService> listServices(DOListRequest listRequest) throws CustomException {
         try {
             if (listRequest.getPage() <= 0) {
@@ -52,13 +52,13 @@ public class ServiceManager {
                 listRequest.setLimit(20);
             }
             final String sql = dataUtil.listFilterData(listRequest.getFilterData(), listRequest.getOrderFields(), listRequest.isDescending(), listRequest.getPage(), listRequest.getLimit(), "service");
-            
+
             return this.serviceRepository.listServices(sql);
         } catch (CustomException ex) {
             throw ex;
         }
     }
-    
+
     public DOListCountResult countServices(DOCountRequest countRequest) throws CustomException {
         try {
             final String sql = dataUtil.countFilterdata(countRequest.getFilterData(), "service");
@@ -70,10 +70,10 @@ public class ServiceManager {
             throw ex;
         }
     }
-    
+
     public DOService getServiceById(String serviceId) throws CustomException {
         try {
-            
+
             serviceId = InputValidatorUtil.validateStringProperty("Service Id", serviceId);
             if (!this.serviceRepository.isExistsById(serviceId)) {
                 throw new DoesNotExistException("Service does not exists. Service Id : " + serviceId);
@@ -83,52 +83,52 @@ public class ServiceManager {
         } catch (CustomException ex) {
             throw ex;
         }
-        
+
     }
-    
+
     public DOService createService(DOService service) throws CustomException {
         try {
-            
+
             String projectId = InputValidatorUtil.validateStringProperty("Project Id", service.getProjectId());
             service.setProjectId(projectId);
-            
+
             long date = service.getDate();
             if (date <= 0) {
-                throw new InvalidInputException("Invalid date. Date : "+date);
+                throw new InvalidInputException("Invalid date. Date : " + date);
             }
             service.setDate(date);
-            
+
             int serviceNo = service.getServiceNo();
             if (serviceNo <= 0) {
-                throw new InvalidInputException("Invalid Service no. Service No : "+serviceNo);
+                throw new InvalidInputException("Invalid Service no. Service No : " + serviceNo);
             }
             service.setServiceNo(serviceNo);
-            
+
             if (!this.projectRepository.isExistsById(projectId)) {
                 throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);
             }
-            
+
             if (!this.projectRepository.checkProjectAlive(projectId)) {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
             }
-            
+
             String id = UUID.randomUUID().toString();
-            
+
             service.setId(id);
             service.setStatus(DataUtil.STATE_NEW);
             service.setDeleted(false);
-            
+
             DOService serviceCreated = this.serviceRepository.save(service);
             return serviceCreated;
         } catch (CustomException ex) {
             throw ex;
         }
-        
+
     }
-    
+
     public boolean deleteService(String serviceId) throws CustomException {
         try {
-            
+
             serviceId = InputValidatorUtil.validateStringProperty("Service Id", serviceId);
             if (!this.serviceRepository.isExistsById(serviceId)) {
                 throw new DoesNotExistException("Service does not exists.Service Id : " + serviceId);
@@ -138,52 +138,52 @@ public class ServiceManager {
         } catch (CustomException ex) {
             throw ex;
         }
-        
+
     }
-    
+
     public DOService updateService(DOService service) throws CustomException {
         try {
             String serviceId = InputValidatorUtil.validateStringProperty("Service Id", service.getId());
             service.setId(serviceId);
-            
-            DOService serviceExists = serviceRepository.findById(serviceId).get();
-            
-            String projectId = serviceExists.getProjectId();
-            
-            long date = service.getDate();
-            if (date <= 0) {
-                throw new InvalidInputException("Invalid date. Date : "+date);
-            }
-            service.setDate(date);
-            
-            int serviceNo = service.getServiceNo();
-            if (serviceNo <= 0) {
-                throw new InvalidInputException("Invalid Service no. Service No : "+serviceNo);
-            }
-            service.setServiceNo(serviceNo);
-            
-            if (!this.projectRepository.isExistsById(projectId)) {
-                throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);
-            }
-            
-            if (!this.projectRepository.checkProjectAlive(projectId)) {
-                throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
-            }
-            
+
             if (!this.serviceRepository.isExistsById(serviceId)) {
                 throw new DoesNotExistException("Service does not exists.Service Id : " + serviceId);
             }
-            
+
+            DOService serviceExists = serviceRepository.findById(serviceId).get();
+
+            String projectId = serviceExists.getProjectId();
+
+            long date = service.getDate();
+            if (date <= 0) {
+                throw new InvalidInputException("Invalid date. Date : " + date);
+            }
+            service.setDate(date);
+
+            int serviceNo = service.getServiceNo();
+            if (serviceNo <= 0) {
+                throw new InvalidInputException("Invalid Service no. Service No : " + serviceNo);
+            }
+            service.setServiceNo(serviceNo);
+
+            if (!this.projectRepository.isExistsById(projectId)) {
+                throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);
+            }
+
+            if (!this.projectRepository.checkProjectAlive(projectId)) {
+                throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
+            }
+
 //            service.setStatus(DataUtil.QUOTATION_STATE_NEW);
             service.setProjectId(projectId);
             service.setDeleted(false);
-            
+
             DOService serviceCreated = this.serviceRepository.save(service);
             return serviceCreated;
         } catch (CustomException ex) {
             throw ex;
         }
-        
+
     }
-    
+
 }

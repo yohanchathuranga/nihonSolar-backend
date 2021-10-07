@@ -93,6 +93,7 @@ public class PaymentManager {
             String projectId = InputValidatorUtil.validateStringProperty("Project Id", payment.getProjectId());
             payment.setProjectId(projectId);
 
+            DOProject project = projectRepository.getById(projectId);
             long date = payment.getDate();
             if (date <= 0) {
                 throw new InvalidInputException("Invalid date. Date : " + date);
@@ -103,6 +104,9 @@ public class PaymentManager {
             if (amount <= 0) {
                 throw new InvalidInputException("Invalid Amount. Amount : " + amount);
             }
+            if (amount > project.getOutstandingPayment()) {
+                throw new InvalidInputException("Amount is greater than outstanding payment. Amount : " + amount);
+            }
             payment.setAmount(amount);
 
             String type = InputValidatorUtil.validateStringProperty("Type", payment.getType());
@@ -111,7 +115,7 @@ public class PaymentManager {
             if (!this.projectRepository.isExistsById(projectId)) {
                 throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);
             }
-            
+
             if (!this.projectRepository.checkProjectAlive(projectId)) {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
             }
@@ -122,11 +126,10 @@ public class PaymentManager {
             payment.setDeleted(false);
 
             DOPayment paymentCreated = this.paymentRepository.save(payment);
-            
-            DOProject project = projectRepository.getById(projectId);
+
             project.setOutstandingPayment(project.getOutstandingPayment() - amount);
             this.projectRepository.save(project);
-            
+
             return paymentCreated;
         } catch (CustomException ex) {
             throw ex;
@@ -150,14 +153,21 @@ public class PaymentManager {
 
     }
 
+    @Transactional
     public DOPayment updatePayment(DOPayment payment) throws CustomException {
         try {
             String paymentId = InputValidatorUtil.validateStringProperty("Payment Id", payment.getId());
             payment.setId(paymentId);
 
+            if (!this.paymentRepository.isExistsById(paymentId)) {
+                throw new DoesNotExistException("Payment does not exists.Payment Id : " + paymentId);
+            }
+
             DOPayment paymentExists = paymentRepository.findById(paymentId).get();
-            
+
             String projectId = paymentExists.getProjectId();
+
+            DOProject project = projectRepository.getById(projectId);
 
             long date = payment.getDate();
             if (date <= 0) {
@@ -169,6 +179,9 @@ public class PaymentManager {
             if (amount <= 0) {
                 throw new InvalidInputException("Invalid Amount. Amount : " + amount);
             }
+            if (amount > (project.getOutstandingPayment() + paymentExists.getAmount())) {
+                throw new InvalidInputException("Amount is greater than outstanding payment. Amount : " + amount);
+            }
             payment.setAmount(amount);
 
             String type = InputValidatorUtil.validateStringProperty("Type", payment.getType());
@@ -177,20 +190,19 @@ public class PaymentManager {
             if (!this.projectRepository.isExistsById(projectId)) {
                 throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);
             }
-            
+
             if (!this.projectRepository.checkProjectAlive(projectId)) {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
-            }
-            
-            if (!this.paymentRepository.isExistsById(paymentId)) {
-                throw new DoesNotExistException("Payment does not exists.Payment Id : " + paymentId);
             }
 
             payment.setProjectId(projectId);
             payment.setDeleted(false);
 
-            DOPayment paymentCreated = this.paymentRepository.save(payment);
-            return paymentCreated;
+            DOPayment paymentUpdated = this.paymentRepository.save(payment);
+
+            project.setOutstandingPayment(project.getOutstandingPayment() + paymentExists.getAmount() - amount);
+            this.projectRepository.save(project);
+            return paymentUpdated;
         } catch (CustomException ex) {
             throw ex;
         }

@@ -159,6 +159,10 @@ public class NotificationManager {
             String notificationId = InputValidatorUtil.validateStringProperty("Notification Id", notification.getId());
             notification.setId(notificationId);
 
+            if (!this.notificationRepository.isExistsById(notificationId)) {
+                throw new DoesNotExistException("Notification does not exists.Notification Id : " + notificationId);
+            }
+
             String userId = InputValidatorUtil.validateStringProperty("User Id", notification.getUserId());
             notification.setUserId(userId);
 
@@ -176,10 +180,6 @@ public class NotificationManager {
 
             if (!this.userRepository.isExistsById(userId)) {
                 throw new DoesNotExistException("User does not exists. User Id : " + userId);
-            }
-
-            if (!this.notificationRepository.isExistsById(notificationId)) {
-                throw new DoesNotExistException("Notification does not exists.Notification Id : " + notificationId);
             }
 
 //            notification.setStatus(DataUtil.QUOTATION_STATE_NEW);
@@ -202,7 +202,7 @@ public class NotificationManager {
             ArrayList<DOCustomerFeedback> feedbackList = customerFeedbackRepository.getNotificationList(dayStartTime, dayEndTime);
             ArrayList<DOClearance> clearanceList = clearanceRepository.getNotificationList(dayStartTime, dayEndTime);
             ArrayList<DOStatusCheck> statusCheckList = statusCheckRepository.getNotificationList(dayStartTime, dayEndTime);
-            
+
             feedbackNotification(feedbackList);
             clearanceNotification(clearanceList);
             statusCheckNotification(statusCheckList);

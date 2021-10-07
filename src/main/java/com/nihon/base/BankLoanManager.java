@@ -157,6 +157,7 @@ public class BankLoanManager {
 
     }
 
+    @Transactional
     public boolean deleteBankLoan(String bankLoanId) throws CustomException {
         try {
 
@@ -164,6 +165,13 @@ public class BankLoanManager {
             if (!this.bankLoanRepository.isExistsById(bankLoanId)) {
                 throw new DoesNotExistException("Bank Loan does not exists.Bank Loan Id : " + bankLoanId);
             }
+            DOBankLoan bankLoan = bankLoanRepository.findById(bankLoanId).get();
+
+            List<DOStatusCheck> statusChecks = statusCheckRepository.getItemsByProjectIdAndType(bankLoan.getProjectId(), DataUtil.STATUS_CHECK_TYPE_BANK_LOAN);
+            for (DOStatusCheck statusCheck : statusChecks) {
+                statusCheckRepository.deleteStatusCheck(true, statusCheck.getId());
+            }
+
             this.bankLoanRepository.deleteBankLoan(true, bankLoanId);
             return true;
         } catch (CustomException ex) {
@@ -178,14 +186,14 @@ public class BankLoanManager {
             String bankLoanId = InputValidatorUtil.validateStringProperty("Bank Loan Id", bankLoan.getId());
             bankLoan.setId(bankLoanId);
 
+            if (!this.bankLoanRepository.isExistsById(bankLoanId)) {
+                throw new DoesNotExistException("Bank loan does not exists. Bank loan Id : " + bankLoanId);
+            }
+
             DOBankLoan bankLoanExists = bankLoanRepository.findById(bankLoanId).get();
 
             String projectId = InputValidatorUtil.validateStringProperty("Project Id", bankLoanExists.getProjectId());
             bankLoan.setProjectId(projectId);
-
-            if (!this.bankLoanRepository.isExistsById(bankLoanId)) {
-                throw new DoesNotExistException("Bank loan does not exists. Bank loan Id : " + bankLoanId);
-            }
 
             if (!this.projectRepository.isExistsById(projectId)) {
                 throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);

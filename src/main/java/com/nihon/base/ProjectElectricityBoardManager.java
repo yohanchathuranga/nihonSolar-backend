@@ -90,11 +90,11 @@ public class ProjectElectricityBoardManager {
             if (!this.projectRepository.isExistsById(projectId)) {
                 throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);
             }
-            
+
             if (!this.projectRepository.checkProjectAlive(projectId)) {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
             }
-            
+
             if (projectElectricityBoardRepository.getItemsByProjectId(projectId) != null) {
                 throw new AlreadyExistException("Already exists for Projrct id . Project Id :" + projectId);
             }
@@ -132,19 +132,18 @@ public class ProjectElectricityBoardManager {
             String projectElectricityBoardId = InputValidatorUtil.validateStringProperty("Project Electricity Board Id", projectElectricityBoard.getId());
             projectElectricityBoard.setId(projectElectricityBoardId);
 
-            
-            DOProjectElectricityBoard projectElectricityBoardExists = projectElectricityBoardRepository.findById(projectElectricityBoardId).get();
-            
-            String projectId = projectElectricityBoardExists.getProjectId();
-
             if (!this.projectElectricityBoardRepository.isExistsById(projectElectricityBoardId)) {
                 throw new DoesNotExistException("Project Electricity board does not exists. Project Electricity board Id : " + projectElectricityBoardId);
             }
 
+            DOProjectElectricityBoard projectElectricityBoardExists = projectElectricityBoardRepository.findById(projectElectricityBoardId).get();
+
+            String projectId = projectElectricityBoardExists.getProjectId();
+
             if (!this.projectRepository.isExistsById(projectId)) {
                 throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);
             }
-            
+
             if (!this.projectRepository.checkProjectAlive(projectId)) {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
             }

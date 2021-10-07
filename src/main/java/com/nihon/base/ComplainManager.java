@@ -29,19 +29,19 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ComplainManager {
-    
+
     @Autowired
     private ComplainRepository complainRepository;
     private ProjectRepository projectRepository;
     private UserRepository userRepository;
     private final DAODataUtil dataUtil;
-    
+
     public ComplainManager(ProjectRepository projectRepository, UserRepository userRepository, DAODataUtil dataUtil) {
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
         this.dataUtil = dataUtil;
     }
-    
+
     public List<DOComplain> listComplains(DOListRequest listRequest) throws CustomException {
         try {
             if (listRequest.getPage() <= 0) {
@@ -51,13 +51,13 @@ public class ComplainManager {
                 listRequest.setLimit(20);
             }
             final String sql = dataUtil.listFilterData(listRequest.getFilterData(), listRequest.getOrderFields(), listRequest.isDescending(), listRequest.getPage(), listRequest.getLimit(), "complain");
-            
+
             return this.complainRepository.listComplains(sql);
         } catch (CustomException ex) {
             throw ex;
         }
     }
-    
+
     public DOListCountResult countComplains(DOCountRequest countRequest) throws CustomException {
         try {
             final String sql = dataUtil.countFilterdata(countRequest.getFilterData(), "complain");
@@ -69,10 +69,10 @@ public class ComplainManager {
             throw ex;
         }
     }
-    
+
     public DOComplain getComplainById(String complainId) throws CustomException {
         try {
-            
+
             complainId = InputValidatorUtil.validateStringProperty("Complain Id", complainId);
             if (!this.complainRepository.isExistsById(complainId)) {
                 throw new DoesNotExistException("Complain does not exists. Complain Id : " + complainId);
@@ -82,48 +82,48 @@ public class ComplainManager {
         } catch (CustomException ex) {
             throw ex;
         }
-        
+
     }
-    
+
     public DOComplain createComplain(DOComplain complain) throws CustomException {
         try {
-            
+
             String projectId = InputValidatorUtil.validateStringProperty("Project Id", complain.getProjectId());
             complain.setProjectId(projectId);
-            
+
             long currentTime = DateTimeUtil.getCurrentTime();
             complain.setDate(currentTime);
-            
+
             String type = InputValidatorUtil.validateStringProperty("Type", complain.getType());
             complain.setType(type);
-            
+
             String complian = InputValidatorUtil.validateStringProperty("Complain", complain.getComplain());
             complain.setComplain(complian);
-            
+
             if (!this.projectRepository.isExistsById(projectId)) {
                 throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);
             }
-            if (!this.projectRepository.checkProjectAlive(projectId)) {
-                throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
-            }
-            
+//            if (!this.projectRepository.checkProjectAlive(projectId)) {
+//                throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
+//            }
+
             String id = UUID.randomUUID().toString();
-            
+
             complain.setId(id);
             complain.setStatus(DataUtil.STATE_NEW);
             complain.setDeleted(false);
-            
+
             DOComplain complainCreated = this.complainRepository.save(complain);
             return complainCreated;
         } catch (CustomException ex) {
             throw ex;
         }
-        
+
     }
-    
+
     public boolean deleteComplain(String complainId) throws CustomException {
         try {
-            
+
             complainId = InputValidatorUtil.validateStringProperty("Complain Id", complainId);
             if (!this.complainRepository.isExistsById(complainId)) {
                 throw new DoesNotExistException("Complain does not exists.Complain Id : " + complainId);
@@ -133,46 +133,62 @@ public class ComplainManager {
         } catch (CustomException ex) {
             throw ex;
         }
-        
+
     }
-    
+
     public DOComplain updateComplain(DOComplain complain) throws CustomException {
         try {
             String complainId = InputValidatorUtil.validateStringProperty("Complain Id", complain.getId());
             complain.setId(complainId);
-            
-            DOComplain complainExists = complainRepository.findById(complainId).get();
-            
-            String projectId = complainExists.getProjectId();
-            
-            String type = InputValidatorUtil.validateStringProperty("Type", complain.getType());
-            complain.setType(type);
-            
-            String complian = InputValidatorUtil.validateStringProperty("Complain", complain.getComplain());
-            complain.setComplain(complian);
-            
+           
             if (!this.complainRepository.isExistsById(complainId)) {
                 throw new DoesNotExistException("Complain does not exists. Complain Id : " + complainId);
             }
             
+            DOComplain complainExists = complainRepository.findById(complainId).get();
+
+            String projectId = complainExists.getProjectId();
+
+            String type = InputValidatorUtil.validateStringProperty("Type", complain.getType());
+            complain.setType(type);
+
+            String complian = InputValidatorUtil.validateStringProperty("Complain", complain.getComplain());
+            complain.setComplain(complian);
+
             if (!this.projectRepository.isExistsById(projectId)) {
                 throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);
             }
-            
-            if (!this.projectRepository.checkProjectAlive(projectId)) {
-                throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
-            }
 
+//            if (!this.projectRepository.checkProjectAlive(projectId)) {
+//                throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
+//            }
 //            complain.setStatus(DataUtil.STATE_NEW);
             complain.setProjectId(projectId);
             complain.setDeleted(false);
-            
+
             DOComplain complainCreated = this.complainRepository.save(complain);
             return complainCreated;
         } catch (CustomException ex) {
             throw ex;
         }
-        
+
     }
-    
+
+    public DOComplain resolveComplain(String complainId) throws CustomException {
+        try {
+            complainId = InputValidatorUtil.validateStringProperty("Complain Id", complainId);
+
+            if (!this.complainRepository.isExistsById(complainId)) {
+                throw new DoesNotExistException("Complain does not exists. Complain Id : " + complainId);
+            }
+
+            this.complainRepository.setStatus(DataUtil.COMPLAIN_RESOLVED, complainId);
+            DOComplain complainExists = complainRepository.findById(complainId).get();
+            return complainExists;
+        } catch (CustomException ex) {
+            throw ex;
+        }
+
+    }
+
 }

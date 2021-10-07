@@ -155,6 +155,10 @@ public class SiteVisitManager {
             String siteVisitId = InputValidatorUtil.validateStringProperty("Site Visit Id", siteVisit.getId());
             siteVisit.setId(siteVisitId);
 
+            if (!this.siteVisitRepository.isExistsById(siteVisitId)) {
+                throw new DoesNotExistException("SiteVisit does not exists.SiteVisit Id : " + siteVisitId);
+            }
+
             DOSiteVisit siteVisitExists = siteVisitRepository.findById(siteVisitId).get();
 
             String projectId = siteVisitExists.getProjectId();
@@ -171,10 +175,6 @@ public class SiteVisitManager {
 
             String remarks = InputValidatorUtil.validateStringProperty("Remarks", siteVisit.getRemarks());
             siteVisit.setRemarks(remarks);
-
-            if (!this.siteVisitRepository.isExistsById(siteVisitId)) {
-                throw new DoesNotExistException("SiteVisit does not exists.SiteVisit Id : " + siteVisitId);
-            }
 
             if (!this.projectRepository.isExistsById(projectId)) {
                 throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);

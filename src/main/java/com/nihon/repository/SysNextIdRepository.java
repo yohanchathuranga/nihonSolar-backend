@@ -23,5 +23,10 @@ public interface SysNextIdRepository extends JpaRepository<DOSysNextId, String> 
 
     @Query(value = "select * from sys_next_id sn where sn.type = ?1", nativeQuery = true)
     DOSysNextId getNextId(String type);
+    
+    @Transactional
+    @Modifying
+    @Query(value = "update sys_next_id sn set sn.prefix = ?1 where sn.type = ?2", nativeQuery = true)
+    int setPrefix(String prefix, String type);
 
 }

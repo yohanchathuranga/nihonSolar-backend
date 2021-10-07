@@ -160,6 +160,10 @@ public class CustomerFeedbackManager {
             String customerFeedbackId = InputValidatorUtil.validateStringProperty("Customer feedback Id", customerFeedback.getId());
             customerFeedback.setId(customerFeedbackId);
 
+            if (!this.customerFeedbackRepository.isExistsById(customerFeedbackId)) {
+                throw new DoesNotExistException("Customer Feedback does not exists.Customer Feedback Id : " + customerFeedbackId);
+            }
+            
             DOCustomerFeedback customerFeedbackExists = customerFeedbackRepository.findById(customerFeedbackId).get();
 
             String projectId = customerFeedbackExists.getProjectId();
@@ -176,10 +180,7 @@ public class CustomerFeedbackManager {
 //            if (acctualDate < 1) {
 //                throw new InvalidInputException("Invalid Actual Date. Actual Date : " + acctualDate);
 //            }
-//            customerFeedback.setActualDate(acctualDate);
-            if (!this.customerFeedbackRepository.isExistsById(customerFeedbackId)) {
-                throw new DoesNotExistException("Customer Feedback does not exists.Customer Feedback Id : " + customerFeedbackId);
-            }
+//            customerFeedback.setActualDate(acctualDate);          
 
             if (!this.userRepository.isExistsById(customerId)) {
                 throw new DoesNotExistException("Customer does not exists. Customer Id : " + customerId);

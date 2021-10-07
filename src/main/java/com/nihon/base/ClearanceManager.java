@@ -144,6 +144,7 @@ public class ClearanceManager {
 
     }
 
+    @Transactional
     public boolean deleteClearance(String clearanceId) throws CustomException {
         try {
 
@@ -151,6 +152,12 @@ public class ClearanceManager {
             if (!this.clearanceRepository.isExistsById(clearanceId)) {
                 throw new DoesNotExistException("Clearance does not exists.Clearance Id : " + clearanceId);
             }
+            DOClearance clearance = clearanceRepository.findById(clearanceId).get();
+            List<DOStatusCheck> statusChecks = statusCheckRepository.getItemsByProjectIdAndType(clearance.getProjectId(), DataUtil.STATUS_CHECK_TYPE_CLEARANCE);
+            for(DOStatusCheck statusCheck : statusChecks) {
+                statusCheckRepository.deleteStatusCheck(true, statusCheck.getId());
+            }
+            
             this.clearanceRepository.deleteClearance(true, clearanceId);
             return true;
         } catch (CustomException ex) {
@@ -198,14 +205,15 @@ public class ClearanceManager {
             String clearanceId = InputValidatorUtil.validateStringProperty("Clearance Id", clearanceCollectedDate.getClearanceId());
             clearanceCollectedDate.setClearanceId(clearanceId);
 
+            if (!this.clearanceRepository.isExistsById(clearanceId)) {
+                throw new DoesNotExistException("Clearance does not exists.Clearance Id : " + clearanceId);
+            }
+            
             long collectedDate = clearanceCollectedDate.getCollectedDate();
             if(collectedDate<=0){
                 throw new InvalidInputException("invalid collected date");
             }
-
-            if (!this.clearanceRepository.isExistsById(clearanceId)) {
-                throw new DoesNotExistException("Clearance does not exists.Clearance Id : " + clearanceId);
-            }
+          
             DOClearance clearance = clearanceRepository.findById(clearanceId).get();
             
             if (!this.projectRepository.checkProjectAlive(clearance.getProjectId())) {

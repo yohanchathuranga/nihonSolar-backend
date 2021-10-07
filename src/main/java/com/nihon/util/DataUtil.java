@@ -49,6 +49,8 @@ public class DataUtil {
     public static String BANK_LOAN_STATUS_NEW = "NEW";
     public static String BANK_LOAN_STATUS_CANCELLED = "CANCELLED";
     public static String BANK_LOAN_STATUS_APPROVED = "APPROVED";
+    
+    public static String COMPLAIN_RESOLVED = "RESOLVED";
 
     public static String TIME_ZONE = "Asia/Colombo";
 }

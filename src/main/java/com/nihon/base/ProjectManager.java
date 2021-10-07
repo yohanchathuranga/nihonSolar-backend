@@ -12,6 +12,7 @@ import com.nihon.entity.DOListCountResult;
 import com.nihon.entity.DOListRequest;
 import com.nihon.entity.DOProject;
 import com.nihon.entity.DOProjectDetails;
+import com.nihon.entity.DOProjectElectricityBoard;
 import com.nihon.repository.BankLoanRepository;
 import com.nihon.repository.ClearanceRepository;
 import com.nihon.repository.ComplainRepository;
@@ -60,8 +61,10 @@ public class ProjectManager {
     private StatusCheckRepository statusCheckRepository;
     private final DAODataUtil dataUtil;
     private IdGenerator idGenerator;
+    private ProjectElectricityBoardManager projectElectricityBoardManager;
 
-    public ProjectManager(UserRepository userRepository, BankLoanRepository bankLoanRepository, ClearanceRepository clearanceRepository, ComplainRepository complainRepository, CustomerFeedbackRepository customerFeedbackRepository, InsuranceRepository insuranceRepository, PaymentRepository paymentRepository, ProjectElectricityBoardRepository projectElectricityBoardRepository, QuotationRepository quotationRepository, ServiceRepository serviceRepository, SiteVisitRepository siteVisitRepository, StatusCheckRepository statusCheckRepository, DAODataUtil dataUtil, IdGenerator idGenerator) {
+
+    public ProjectManager(UserRepository userRepository, BankLoanRepository bankLoanRepository, ClearanceRepository clearanceRepository, ComplainRepository complainRepository, CustomerFeedbackRepository customerFeedbackRepository, InsuranceRepository insuranceRepository, PaymentRepository paymentRepository, ProjectElectricityBoardRepository projectElectricityBoardRepository, QuotationRepository quotationRepository, ServiceRepository serviceRepository, SiteVisitRepository siteVisitRepository, StatusCheckRepository statusCheckRepository, DAODataUtil dataUtil, IdGenerator idGenerator, ProjectElectricityBoardManager projectElectricityBoardManager) {
         this.userRepository = userRepository;
         this.bankLoanRepository = bankLoanRepository;
         this.clearanceRepository = clearanceRepository;
@@ -76,7 +79,9 @@ public class ProjectManager {
         this.statusCheckRepository = statusCheckRepository;
         this.dataUtil = dataUtil;
         this.idGenerator = idGenerator;
+        this.projectElectricityBoardManager = projectElectricityBoardManager;
     }
+    
 
     public List<DOProject> listProjects(DOListRequest listRequest) throws CustomException {
         try {
@@ -121,6 +126,7 @@ public class ProjectManager {
 
     }
 
+    @Transactional
     public DOProject createProject(DOProject project) throws CustomException {
         try {
             String userId = InputValidatorUtil.validateStringProperty("User Id ", project.getUserId());
@@ -143,6 +149,10 @@ public class ProjectManager {
             project.setDeleted(false);
 
             DOProject projectCreated = this.projectRepository.save(project);
+            
+            DOProjectElectricityBoard projectElectricityBoard = new DOProjectElectricityBoard();
+            projectElectricityBoard.setProjectId(id);
+            projectElectricityBoardManager.createProjectElectricityBoard(projectElectricityBoard);
             return projectCreated;
         } catch (CustomException ex) {
             throw ex;

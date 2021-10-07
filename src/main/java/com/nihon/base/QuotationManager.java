@@ -131,7 +131,7 @@ public class QuotationManager {
             if (!this.projectRepository.checkProjectAlive(projectId)) {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
             }
-            
+
             List<DOQuotation> quotations = this.quotationRepository.getItemsByProjectId(quotation.getProjectId());
             if (quotations.isEmpty()) {
                 long nextWeek = currentTime;
@@ -147,7 +147,7 @@ public class QuotationManager {
                     customerFeedbackRepository.save(customerFeedback);
                     nextWeek = DateTimeUtil.getNextWeekDayTime(nextWeek);
                 }
-                
+
             }
 
             projectRepository.setStatus(DataUtil.PROJECT_STATE_PENDING, projectId);
@@ -185,8 +185,12 @@ public class QuotationManager {
             String quotationId = InputValidatorUtil.validateStringProperty("Quotation Id", quotation.getId());
             quotation.setId(quotationId);
 
+            if (!this.quotationRepository.isExistsById(quotationId)) {
+                throw new DoesNotExistException("Quotation does not exists.Quotation Id : " + quotationId);
+            }
+
             DOQuotation quotationExists = quotationRepository.getItemsById(quotationId);
-            
+
             String projectId = quotationExists.getProjectId();
 
             String userId = quotationExists.getUserId();
@@ -203,10 +207,6 @@ public class QuotationManager {
             String acDcSpd = InputValidatorUtil.validateStringProperty("AC DC SPD", quotation.getAcDcSpd());
             quotation.setAcDcSpd(acDcSpd);
 
-            if (!this.quotationRepository.isExistsById(quotationId)) {
-                throw new DoesNotExistException("Quotation does not exists.Quotation Id : " + quotationId);
-            }
-
             if (!this.userRepository.isExistsById(userId)) {
                 throw new DoesNotExistException("User does not exists. User Id : " + userId);
             }
@@ -218,16 +218,15 @@ public class QuotationManager {
             if (!this.projectRepository.isExistsByIdandUserId(projectId, userId)) {
                 throw new DoesNotExistException("Project does not belongs to customer. Project Id : " + projectId);
             }
-            
+
             if (!this.projectRepository.checkProjectAlive(projectId)) {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
             }
-            
 
             quotation.setProjectId(projectId);
             quotation.setUserId(userId);
             quotation.setIssuedDate(quotationExists.getIssuedDate());
-            if(quotation.getStatus().isEmpty() || quotation.getStatus() ==null){
+            if (quotation.getStatus().isEmpty() || quotation.getStatus() == null) {
                 quotation.setStatus(quotationExists.getStatus());
             }
             quotation.setDeleted(false);
@@ -250,7 +249,7 @@ public class QuotationManager {
             }
 
             DOQuotation quotation = this.quotationRepository.getItemsById(quotationId);
-            
+
             if (!this.projectRepository.checkProjectAlive(quotation.getProjectId())) {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + quotation.getProjectId());
             }

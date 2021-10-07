@@ -108,11 +108,11 @@ public class InsuranceManager {
             if (!this.projectRepository.isExistsById(projectId)) {
                 throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);
             }
-            
+
             if (!this.projectRepository.checkProjectAlive(projectId)) {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
             }
-            
+
             if (insuranceRepository.getItemsByProjectId(projectId) != null) {
                 throw new AlreadyExistException("Already exists for Projrct id . Project Id :" + projectId);
             }
@@ -151,9 +151,13 @@ public class InsuranceManager {
             String insuranceId = InputValidatorUtil.validateStringProperty("Insurance Id", insurance.getId());
             insurance.setId(insuranceId);
 
+            if (!this.insuranceRepository.isExistsById(insuranceId)) {
+                throw new DoesNotExistException("Insurance does not exists.Insurance Id : " + insuranceId);
+            }
+
             DOInsurance insuranceExists = insuranceRepository.findById(insuranceId).get();
-            
-            String projectId = insuranceExists.getProjectId() ;
+
+            String projectId = insuranceExists.getProjectId();
 
             long applyDate = insurance.getApplyDate();
             if (applyDate <= 0) {
@@ -170,13 +174,9 @@ public class InsuranceManager {
             if (!this.projectRepository.isExistsById(projectId)) {
                 throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);
             }
-            
+
             if (!this.projectRepository.checkProjectAlive(projectId)) {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
-            }
-
-            if (!this.insuranceRepository.isExistsById(insuranceId)) {
-                throw new DoesNotExistException("Insurance does not exists.Insurance Id : " + insuranceId);
             }
 
             insurance.setProjectId(projectId);

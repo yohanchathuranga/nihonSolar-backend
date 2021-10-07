@@ -24,12 +24,21 @@ public class IdGenerator {
     public String generateId(String type, long date) {
         String id = "";
         try {
-            int nextId = getId(type);
+
             String month = DateTimeUtil.getStringMonth(date);
+            DOSysNextId sysNextId = getId(type);
+            int nextId = sysNextId.getNextId();
+
+            if (!sysNextId.getPrefix().equals(month)) {
+                sysNextIdRepository.setPrefix(month.toUpperCase(), type);
+                setId(type, 1);
+                nextId = 1;
+            }
+
             String year = DateTimeUtil.getStringYear(date);
-            id = "NS-" + month.toUpperCase() + "-" + year + "-" + String.format("%08d", nextId) ;
+            id = "NS-" + month.toUpperCase() + "-" + year + "-" + String.format("%08d", nextId);
             setId(type, nextId + 1);
-            System.out.println("Id : "+id);
+            System.out.println("Id : " + id);
 
         } catch (DoesNotExistException ex) {
             System.out.println("Time get Error");
@@ -37,9 +46,9 @@ public class IdGenerator {
         return id;
     }
 
-    public int getId(String type) {
+    public DOSysNextId getId(String type) {
         DOSysNextId sysNextId = sysNextIdRepository.getNextId(type);
-        return sysNextId.getNextId();
+        return sysNextId;
     }
 
     public void setId(String type, int id) {
