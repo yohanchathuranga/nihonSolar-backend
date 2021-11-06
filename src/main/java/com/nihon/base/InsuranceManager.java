@@ -49,8 +49,6 @@ public class InsuranceManager {
         this.dataUtil = dataUtil;
     }
 
-    
-
     public List<DOInsurance> listInsurances(DOListRequest listRequest) throws CustomException {
         try {
             if (listRequest.getPage() <= 0) {
@@ -121,17 +119,23 @@ public class InsuranceManager {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
             }
 
-//            if (insuranceRepository.getItemsByProjectId(projectId) != null) {
-//                throw new AlreadyExistException("Already exists for Projrct id . Project Id :" + projectId);
-//            }
+            String year = insurance.getYear();
+            if (year == null || year.isEmpty()) {
+                year = DateTimeUtil.getStringYear(applyDate);
+            }
+            insurance.setYear(year);
 
+            if (insuranceRepository.isExistsByProjectIdAndYear(projectId, year)) {
+                throw new AlreadyExistException("Already exists for Project id . Project Id :" + projectId);
+            }
+            
             DOStatusCheck statusCheck = new DOStatusCheck();
             statusCheck.setProjectId(projectId);
             statusCheck.setType(DataUtil.STATUS_CHECK_TYPE_INSURANCE);
             statusCheck.setStatus(DataUtil.STATUS_CHECK_STATE_NEW);
             statusCheck.setDeleted(false);
             statusCheck.setId(UUID.randomUUID().toString());
-            statusCheck.setCheckNo(statusCheckRepository.getMaxCheckNoByType(projectId, DataUtil.STATUS_CHECK_TYPE_INSURANCE)+1);
+            statusCheck.setCheckNo(statusCheckRepository.getMaxCheckNoByType(projectId, DataUtil.STATUS_CHECK_TYPE_INSURANCE) + 1);
             statusCheck.setActualDate(DateTimeUtil.getNextYearDayTime(applyDate));
             statusCheckRepository.save(statusCheck);
 

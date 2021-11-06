@@ -21,7 +21,7 @@ public class DOProjectDetails {
     private DOClearance clearance;
     private List<DOComplain> complains;
     private List<DOCustomerFeedback> customerFeedbacks;
-    private DOInsurance insurance;
+    private List<DOInsurance> insurance;
     private List<DOPayment> payments;
     private DOProjectElectricityBoard projectElectricityBoard;
     private List<DOQuotation> quotations;
@@ -79,11 +79,11 @@ public class DOProjectDetails {
         this.customerFeedbacks = customerFeedbacks;
     }
 
-    public DOInsurance getInsurance() {
+    public List<DOInsurance> getInsurance() {
         return insurance;
     }
 
-    public void setInsurance(DOInsurance insurance) {
+    public void setInsurance(List<DOInsurance> insurance) {
         this.insurance = insurance;
     }
 
