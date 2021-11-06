@@ -13,7 +13,8 @@ public class DOStatusCheck implements Serializable {
     @Id
     private String id;
     private String projectId;
-    private String type;   
+    private String type;
+    private String remark;
     private int checkNo;
     private long actualDate;
     private long checkedDate;
@@ -24,15 +25,15 @@ public class DOStatusCheck implements Serializable {
     public DOStatusCheck() {
     }
 
-    public DOStatusCheck(String id, String projectId, String type, int checkNo, long actualDate, long checkedDate, String status, boolean deleted) {
+    public DOStatusCheck(String id, String projectId, String type, String remark, int checkNo, long actualDate, long checkedDate, String status) {
         this.id = id;
         this.projectId = projectId;
         this.type = type;
+        this.remark = remark;
         this.checkNo = checkNo;
         this.actualDate = actualDate;
         this.checkedDate = checkedDate;
         this.status = status;
-        this.deleted = deleted;
     }
 
     public String getId() {
@@ -99,6 +100,13 @@ public class DOStatusCheck implements Serializable {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
-    
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 
 }

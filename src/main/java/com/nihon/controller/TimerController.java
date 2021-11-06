@@ -29,13 +29,13 @@ public class TimerController {
         this.notificationManager = notificationManager;
     }
 
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 300000)
     public void scheduleFixedRateTask() {
-//        try {
-//            System.out.println("Fixed rate task - " + System.currentTimeMillis() / 1000);
-//            notificationManager.processNotification();
-//        } catch (CustomException ex) {
-//            System.out.println(ex);
-//        }
+        try {
+            System.out.println("Fixed rate task - " + System.currentTimeMillis() / 1000);
+            notificationManager.processNotification();
+        } catch (CustomException ex) {
+            System.out.println(ex);
+        }
     }
 }

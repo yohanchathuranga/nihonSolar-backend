@@ -90,4 +90,14 @@ public class NotificationController {
             return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
         }
     }
+    
+    // get notification by id
+    @GetMapping("/read/{id}")
+    public ResponseEntity<DONotification> readNotification(@PathVariable(value = "id") String notificationId) {
+        try {
+            return new ResponseEntity(this.notificationManager.readNotification(notificationId), HttpStatus.OK);
+        } catch (CustomException ex) {
+            return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
+        }
+    }
 }

@@ -16,11 +16,12 @@ public class DataUtil {
 
     public static String USER_TYPE_EMPLOYEE = "EMPLOYEE";
     public static String USER_TYPE_CUSTOMER = "CUSTOMER";
-    public static String USER_TYPE_ADMIN = "ADMIN";
+    public static String USER_TYPE_ADMIN = "ADMINISTRATOR";
 
     public static String PROJECT_STATE_NEW = "NEW";
     public static String PROJECT_STATE_PENDING = "PENDING";
     public static String PROJECT_STATE_APPROVED = "APPROVED";
+    public static String PROJECT_STATE_ADVANCED = "ADVANCED";
     public static String PROJECT_STATE_CANCELLED = "CANCELLED";
     public static String PROJECT_STATE_COMPLETE = "COMPLETE";
 
@@ -39,18 +40,42 @@ public class DataUtil {
     public static String NOTIFICATION_STATE_NEW = "NEW";
     public static String NOTIFICATION_STATE_SENT = "SENT";
     public static String NOTIFICATION_STATE_FAILED = "FAILED";
+    public static String NOTIFICATION_STATE_READ = "READ";
+
+    public static String NOTIFICATION_TYPE_CUSTOMER_FEEDBACK = "CUSTOMER_FEEDBACK";
+    public static String NOTIFICATION_TYPE_BANK_LOAN = "BANK_LOAN";
+    public static String NOTIFICATION_TYPE_CLEARANCE = "CLEARANCE";
+    public static String NOTIFICATION_TYPE_INSURANCE = "INSURANCE";
+    public static String NOTIFICATION_TYPE_SITE_VISIT = "SITE_VISIT";
+    public static String NOTIFICATION_TYPE_QUOTATION = "QUOTATION";
+    public static String NOTIFICATION_TYPE_SERVICE = "SERVICE";
+    public static String NOTIFICATION_TYPE_COMPLAIN = "COMPLAIN";
 
     public static String STATUS_CHECK_STATE_NEW = "NEW";
     public static String STATUS_CHECK_STATE_CHECKED = "CHECKED";
-    
-     public static String STATUS_CHECK_TYPE_CLEARANCE = "CLEARANCE";
-    public static String STATUS_CHECK_TYPE_BANK_LOAN = "BANKLOAN";
-    
+
+    public static String STATUS_CHECK_TYPE_CLEARANCE = "CLEARANCE";
+    public static String STATUS_CHECK_TYPE_BANK_LOAN = "BANK_LOAN";
+    public static String STATUS_CHECK_TYPE_INSURANCE = "INSURANCE";
+    public static String STATUS_CHECK_TYPE_SITE_VISIT = "SITE_VISIT";
+    public static String STATUS_CHECK_TYPE_QUOTATION = "QUOTATION";
+    public static String STATUS_CHECK_TYPE_SERVICE = "SERVICE";
+    public static String STATUS_CHECK_TYPE_COMPLAIN = "COMPLAIN";
+
     public static String BANK_LOAN_STATUS_NEW = "NEW";
     public static String BANK_LOAN_STATUS_CANCELLED = "CANCELLED";
     public static String BANK_LOAN_STATUS_APPROVED = "APPROVED";
-    
+
     public static String COMPLAIN_RESOLVED = "RESOLVED";
+    public static String NOTIFICATION_SENT = "NOTIFICATION_SENT";
+
+    public static String EMPLOYEE_ROLE_ADMINISTRATOR = "DIRECTOR";
+    public static String EMPLOYEE_ROLE_FINANCIAL_OFFICER = "ASSISTANT ACCOUNTANT";
+    public static String EMPLOYEE_ROLE_TECHNICAL_OFFICER = "TECHNICAL ANALYST";
+    public static String EMPLOYEE_ROLE_MARKETING_MANAGER = "MARKETING MANAGER";
+    public static String EMPLOYEE_ROLE_MARKETING_OFFICER = "MARKETING OFFICER";
+    public static String EMPLOYEE_ROLE_OFFICE_ASSISTANT = "OFFICE ASSISTANT";
+    public static String EMPLOYEE_ROLE_ENGINEER = "ENGINEER";
 
     public static String TIME_ZONE = "Asia/Colombo";
 }

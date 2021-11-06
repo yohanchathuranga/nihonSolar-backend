@@ -16,6 +16,7 @@ public class DOInsurance implements Serializable {
     private long applyDate;
     private int amountPerAnum;
     private long receivedDate;
+    private String year;
     private String status;
     private boolean deleted;
 
@@ -23,15 +24,17 @@ public class DOInsurance implements Serializable {
     public DOInsurance() {
     }
 
-    public DOInsurance(String id, String projectId, long applyDate, int amountPerAnum, long receivedDate, String status, boolean deleted) {
+    public DOInsurance(String id, String projectId, long applyDate, int amountPerAnum, long receivedDate, String year, String status, boolean deleted) {
         this.id = id;
         this.projectId = projectId;
         this.applyDate = applyDate;
         this.amountPerAnum = amountPerAnum;
         this.receivedDate = receivedDate;
+        this.year = year;
         this.status = status;
         this.deleted = deleted;
     }
+
 
     public String getId() {
         return id;
@@ -88,6 +91,14 @@ public class DOInsurance implements Serializable {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
     }
     
 }

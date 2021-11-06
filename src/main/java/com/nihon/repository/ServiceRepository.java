@@ -34,4 +34,7 @@ public interface ServiceRepository extends JpaRepository<DOService, String>,Serv
     @Modifying
     @Query(value = "update service s set s.deleted = ?1 where s.project_id = ?2", nativeQuery = true)
     int deleteByProjectId(boolean deleted, String projectId);
+    
+    @Query(value = "select COALESCE(MAX(service_no),0) from service where project_id = ?1 and deleted = false", nativeQuery = true)
+    int getMaxCheckNo(String projectId);
 }

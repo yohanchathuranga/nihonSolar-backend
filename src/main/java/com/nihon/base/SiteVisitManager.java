@@ -185,6 +185,7 @@ public class SiteVisitManager {
             }
 
             siteVisit.setProjectId(projectId);
+            siteVisit.setStatus(siteVisitExists.getStatus());
             siteVisit.setDeleted(false);
 
             DOSiteVisit siteVisitCreated = this.siteVisitRepository.save(siteVisit);

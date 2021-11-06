@@ -19,6 +19,7 @@ import com.nihon.repository.UserRepository;
 import com.nihon.util.DataUtil;
 import com.nihon.util.EmailSender;
 import com.nihon.util.InputValidatorUtil;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import yohan.exceptions.AlreadyExistException;
 import yohan.exceptions.CustomException;
@@ -26,6 +27,7 @@ import yohan.exceptions.DoesNotExistException;
 import yohan.exceptions.InvalidInputException;
 import java.util.List;
 import java.util.UUID;
+import javax.xml.bind.DatatypeConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import yohan.exceptions.LoginFailedException;
@@ -46,7 +48,6 @@ public class UserManager {
         this.dataUtil = dataUtil;
         this.emailSender = emailSender;
     }
-
 
     public List<DOUser> listUsers(DOListRequest listRequest) throws CustomException {
         try {
@@ -102,14 +103,8 @@ public class UserManager {
             String contactNo = InputValidatorUtil.validateStringProperty("Contact No", user.getContactNo());
             user.setContact_no(contactNo);
 
-            String email = InputValidatorUtil.validateStringProperty("Email", user.getEmail());
-            user.setEmail(email);
-
-            String nic = InputValidatorUtil.validateStringProperty("NIC", user.getNic());
-            user.setNic(nic);
-
             String address = InputValidatorUtil.validateStringProperty("Address", user.getAddress());
-            user.setStatus(address);
+            user.setAddress(address);
 
             String type = InputValidatorUtil.validateStringProperty("User Type", user.getType());
             user.setType(type);
@@ -119,12 +114,20 @@ public class UserManager {
             }
 
             if (type.toUpperCase().equals(DataUtil.USER_TYPE_EMPLOYEE)) {
-                String password = InputValidatorUtil.validateStringProperty("Password", user.getPassword());
-                user.setPassword(password);
-            }
+                String email = InputValidatorUtil.validateStringProperty("Email", user.getEmail());
+                user.setEmail(email);
 
-            if (this.userRepository.isExistsByEmail(email)) {
-                throw new AlreadyExistException("Email already exists. Email : " + email);
+                String nic = InputValidatorUtil.validateStringProperty("NIC", user.getNic());
+                user.setNic(nic);
+
+                String password = InputValidatorUtil.validateStringProperty("Password", user.getPassword());
+                password = getSHAHash(password);
+                user.setPassword(password);
+
+                if (this.userRepository.isExistsByEmail(email)) {
+                    throw new AlreadyExistException("Email already exists. Email : " + email);
+                }
+
             }
 
             String id = UUID.randomUUID().toString();
@@ -170,14 +173,8 @@ public class UserManager {
             String contactNo = InputValidatorUtil.validateStringProperty("Contact No", user.getContactNo());
             user.setContact_no(contactNo);
 
-            String email = InputValidatorUtil.validateStringProperty("Email", user.getEmail());
-            user.setEmail(email);
-
-            String nic = InputValidatorUtil.validateStringProperty("NIC", user.getNic());
-            user.setNic(nic);
-
             String address = InputValidatorUtil.validateStringProperty("Address", user.getAddress());
-            user.setStatus(address);
+            user.setAddress(address);
 
             String type = InputValidatorUtil.validateStringProperty("User Type", user.getType());
             user.setType(type);
@@ -187,11 +184,21 @@ public class UserManager {
             }
 
             DOUser userExists = this.userRepository.getById(userId);
-            if (!email.equals(userExists.getEmail())) {
-                if (!this.userRepository.isExistsByEmail(email)) {
-                    throw new AlreadyExistException("Email already exists. Email : " + email);
+            if (type.toUpperCase().equals(DataUtil.USER_TYPE_EMPLOYEE)) {
+                String email = InputValidatorUtil.validateStringProperty("Email", user.getEmail());
+                user.setEmail(email);
+
+                String nic = InputValidatorUtil.validateStringProperty("NIC", user.getNic());
+                user.setNic(nic);
+
+                if (!email.equals(userExists.getEmail())) {
+                    if (this.userRepository.isExistsByEmail(email)) {
+                        throw new AlreadyExistException("Email already exists. Email : " + email);
+                    }
                 }
             }
+
+            user.setStatus(userExists.getStatus());
             user.setPassword(userExists.getPassword());
             user.setDeleted(false);
 
@@ -210,6 +217,7 @@ public class UserManager {
             loginRequest.setEmail(email);
 
             String password = InputValidatorUtil.validateStringProperty("Password", loginRequest.getPassword());
+            password = getSHAHash(password);
             loginRequest.setPassword(password);
 
             if (!this.userRepository.isExistsByEmail(email)) {
@@ -228,7 +236,7 @@ public class UserManager {
         }
     }
 
-    public void forgotPasswordRequest(DOForgotPasswordRequest forgotPasswordRequest) throws CustomException {       
+    public void forgotPasswordRequest(DOForgotPasswordRequest forgotPasswordRequest) throws CustomException {
         try {
 
             String email = InputValidatorUtil.validateStringProperty("Email", forgotPasswordRequest.getEmail());
@@ -268,8 +276,9 @@ public class UserManager {
 
             String verificationCode = InputValidatorUtil.validateStringProperty("Verification Code", forgotPassword.getVerificationCode());
             forgotPassword.setVerificationCode(verificationCode);
-            
+
             String password = InputValidatorUtil.validateStringProperty("Password", forgotPassword.getPassword());
+            password = getSHAHash(password);
             forgotPassword.setPassword(password);
 
             if (!this.userRepository.isExistsByEmail(email)) {
@@ -278,7 +287,7 @@ public class UserManager {
 
             DOUser user = this.userRepository.getByEmail(email);
             String vCode = userRepository.getForgotPassword(user.getId());
-            if(!vCode.equals(verificationCode)){
+            if (!vCode.equals(verificationCode)) {
                 throw new LoginFailedException();
             }
             user.setPassword(password);
@@ -296,9 +305,11 @@ public class UserManager {
             resetPasswordRequest.setUserId(userId);
 
             String oldPassword = InputValidatorUtil.validateStringProperty("Old Password", resetPasswordRequest.getOldPassword());
+            oldPassword = getSHAHash(oldPassword);
             resetPasswordRequest.setOldPassword(oldPassword);
 
             String newPassword = InputValidatorUtil.validateStringProperty("New Password", resetPasswordRequest.getNewPassword());
+            newPassword = getSHAHash(newPassword);
             resetPasswordRequest.setNewPassword(newPassword);
 
             if (!this.userRepository.isExistsById(userId)) {
@@ -306,7 +317,7 @@ public class UserManager {
             }
 
             DOUser user = this.userRepository.getById(userId);
-            if(!user.getPassword().equals(oldPassword)){
+            if (!user.getPassword().equals(oldPassword)) {
                 throw new LoginFailedException();
             }
             user.setPassword(newPassword);
@@ -315,6 +326,22 @@ public class UserManager {
         } catch (CustomException ex) {
             throw ex;
         }
+    }
+
+    private String getSHAHash(String input) {
+        String result = null;
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(input.getBytes("UTF-8"));
+            return bytesToHex(hash); // make it printable
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return result;
+    }
+
+    private String bytesToHex(byte[] hash) {
+        return DatatypeConverter.printHexBinary(hash);
     }
 
 }

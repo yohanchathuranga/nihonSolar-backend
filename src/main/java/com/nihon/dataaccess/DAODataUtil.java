@@ -20,10 +20,14 @@ import yohan.exceptions.DatabaseException;
 @Service
 public class DAODataUtil {
 
-    public String listFilterData(List<DOPropertyFilter> filterData, ArrayList<String> orderFields, boolean isDescending, int page, int limit, String tableName) throws CustomException {
+    public String listFilterData(List<DOPropertyFilter> filterData, ArrayList<String> orderFields, boolean isDescending, boolean isDistinct, int page, int limit, String tableName) throws CustomException {
         try {
-
-            String sql = "select * from " + tableName + " where deleted = 0 ";
+            String sql = "";
+            if (isDistinct) {
+                sql = "select * from view_" + tableName + " where deleted = 0 ";
+            } else {
+                sql = "select * from " + tableName + " where deleted = 0 ";
+            }
 
             String whereClause = "";
             if (filterData != null && filterData.size() > 0) {
@@ -31,7 +35,7 @@ public class DAODataUtil {
             }
 
             if (!whereClause.isEmpty()) {
-                sql = sql + " and " + whereClause;
+                sql = sql + " and (" + whereClause + ") ";
             }
 
             if (orderFields != null && orderFields.size() > 0) {
@@ -58,14 +62,78 @@ public class DAODataUtil {
 
     public String countFilterdata(List<DOPropertyFilter> filterData, String tableName) throws CustomException {
         try {
-            String sql = "select count(*) as count from " + tableName + " where deleted = 0 ";
+            String sql = "";
+
+            sql = "select count(*) as count from " + tableName + " where deleted = 0 ";
+
             String whereClause = "";
             if (filterData != null && filterData.size() > 0) {
                 whereClause = FilterUtil.generateWhereClause((ArrayList<DOPropertyFilter>) filterData);
             }
 
             if (!whereClause.isEmpty()) {
-               sql = sql + " and " + whereClause;
+                sql = sql + " and (" + whereClause + ") ";
+            }
+            return sql;
+        } catch (CustomException ex) {
+            throw ex;
+        }
+
+    }
+
+    public String listFilterData(List<DOPropertyFilter> filterData, ArrayList<String> orderFields, boolean isDescending, int page, int limit, String tableName) throws CustomException {
+        try {
+            String sql = "";
+
+            sql = "select * from " + tableName + " where deleted = 0 ";
+
+            String whereClause = "";
+            if (filterData != null && filterData.size() > 0) {
+                whereClause = FilterUtil.generateWhereClause((ArrayList<DOPropertyFilter>) filterData);
+            }
+
+            if (!whereClause.isEmpty()) {
+                sql = sql + " and (" + whereClause + ") ";
+            }
+
+            if (orderFields != null && orderFields.size() > 0) {
+                String orderStr = String.join(",", orderFields);
+                sql = sql + "order by " + orderStr;
+                if (isDescending) {
+                    sql += " desc";
+                }
+            } else {
+                sql = sql + "order by id";
+                if (isDescending) {
+                    sql += " desc";
+                }
+            }
+
+            sql = sql + " limit " + limit + " offset " + ((page - 1) * limit);
+
+            return sql;
+
+        } catch (Exception ex) {
+            throw new DatabaseException(ex.getMessage());
+        }
+    }
+
+    public String countFilterdata(List<DOPropertyFilter> filterData, boolean isDistinct, String tableName) throws CustomException {
+        try {
+            String sql = "";
+            if (isDistinct) {
+                sql = "select count(*) as count from view_" + tableName + " where deleted = 0 ";
+            } else {
+                sql = "select count(*) as count from " + tableName + " where deleted = 0 ";
+            }
+
+            String whereClause = "";
+            if (filterData != null && filterData.size() > 0) {
+                whereClause = FilterUtil.generateWhereClause((ArrayList<DOPropertyFilter>) filterData);
+            }
+
+            if (!whereClause.isEmpty()) {
+                sql = sql + " and (" + whereClause + ") ";
             }
             return sql;
         } catch (CustomException ex) {

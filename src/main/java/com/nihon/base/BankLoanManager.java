@@ -214,28 +214,33 @@ public class BankLoanManager {
     }
 
     @Transactional
-    public DOBankLoan approve(String bankLoanId) throws CustomException {
+    public DOBankLoan approve(DOBankLoan bankLoan) throws CustomException {
         try {
 
-            bankLoanId = InputValidatorUtil.validateStringProperty("Bank Loan Id", bankLoanId);
+            String bankLoanId = InputValidatorUtil.validateStringProperty("Bank Loan Id", bankLoan.getId());
 
             if (!this.bankLoanRepository.isExistsById(bankLoanId)) {
                 throw new DoesNotExistException("Bank loan does not exists. Bank loan Id : " + bankLoanId);
             }
 
-            DOBankLoan bankLoan = bankLoanRepository.findById(bankLoanId).get();
+            if (bankLoan.getApprovedDate() <= 0) {
+                bankLoan.setApprovedDate(DateTimeUtil.getCurrentTime());
+            }
 
-            List<DOStatusCheck> statusChecks = statusCheckRepository.getItemsByProjectIdAndType(bankLoan.getProjectId(), DataUtil.STATUS_CHECK_TYPE_BANK_LOAN);
+            DOBankLoan bankLoanExists = bankLoanRepository.findById(bankLoanId).get();
+
+            List<DOStatusCheck> statusChecks = statusCheckRepository.getItemsByProjectIdAndType(bankLoanExists.getProjectId(), DataUtil.STATUS_CHECK_TYPE_BANK_LOAN);
             for (DOStatusCheck statusCheck : statusChecks) {
                 if (statusCheck.getStatus().equals(DataUtil.STATUS_CHECK_STATE_NEW)) {
                     statusCheckRepository.setStatus(DataUtil.STATE_DISCARD, statusCheck.getId());
                 }
             }
 
-            bankLoan.setStatus(DataUtil.BANK_LOAN_STATUS_APPROVED);
-            bankLoan.setDeleted(false);
+            bankLoanExists.setApprovedDate(bankLoan.getApprovedDate());
+            bankLoanExists.setStatus(DataUtil.BANK_LOAN_STATUS_APPROVED);
+            bankLoanExists.setDeleted(false);
 
-            DOBankLoan bankLoanCreated = this.bankLoanRepository.save(bankLoan);
+            DOBankLoan bankLoanCreated = this.bankLoanRepository.save(bankLoanExists);
             return bankLoanCreated;
         } catch (CustomException ex) {
             throw ex;

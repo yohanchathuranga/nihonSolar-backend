@@ -50,7 +50,6 @@ public class ClearanceManager {
         this.dataUtil = dataUtil;
     }
 
-    
     public List<DOClearance> listClearances(DOListRequest listRequest) throws CustomException {
         try {
             if (listRequest.getPage() <= 0) {
@@ -59,7 +58,7 @@ public class ClearanceManager {
             if (listRequest.getLimit() <= 0) {
                 listRequest.setLimit(20);
             }
-            final String sql = dataUtil.listFilterData(listRequest.getFilterData(), listRequest.getOrderFields(), listRequest.isDescending(), listRequest.getPage(), listRequest.getLimit(), "clearance");
+            final String sql = dataUtil.listFilterData(listRequest.getFilterData(), listRequest.getOrderFields(), listRequest.isDescending(), listRequest.isDistinct(), listRequest.getPage(), listRequest.getLimit(), "clearance");
 
             return this.clearanceRepository.listClearances(sql);
         } catch (CustomException ex) {
@@ -69,7 +68,7 @@ public class ClearanceManager {
 
     public DOListCountResult countClearances(DOCountRequest countRequest) throws CustomException {
         try {
-            final String sql = dataUtil.countFilterdata(countRequest.getFilterData(), "clearance");
+            final String sql = dataUtil.countFilterdata(countRequest.getFilterData(), countRequest.isDistinct(), "clearance");
             Object o = this.clearanceRepository.countClearances(sql);
             DOListCountResult countResult = new DOListCountResult();
             countResult.setCount(Integer.valueOf(o.toString()));
@@ -104,7 +103,7 @@ public class ClearanceManager {
             if (!this.projectRepository.isExistsById(projectId)) {
                 throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);
             }
-            
+
             if (!this.projectRepository.checkProjectAlive(projectId)) {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
             }
@@ -112,7 +111,7 @@ public class ClearanceManager {
             if (clearanceRepository.getItemsByProjectId(projectId) != null) {
                 throw new AlreadyExistException("Already exists for Projrct id . Project Id :" + projectId);
             }
-            
+
             if (clearance.getSubmitDate() <= 0) {
                 clearance.setSubmitDate(DateTimeUtil.getCurrentTime());
             }
@@ -154,10 +153,10 @@ public class ClearanceManager {
             }
             DOClearance clearance = clearanceRepository.findById(clearanceId).get();
             List<DOStatusCheck> statusChecks = statusCheckRepository.getItemsByProjectIdAndType(clearance.getProjectId(), DataUtil.STATUS_CHECK_TYPE_CLEARANCE);
-            for(DOStatusCheck statusCheck : statusChecks) {
+            for (DOStatusCheck statusCheck : statusChecks) {
                 statusCheckRepository.deleteStatusCheck(true, statusCheck.getId());
             }
-            
+
             this.clearanceRepository.deleteClearance(true, clearanceId);
             return true;
         } catch (CustomException ex) {
@@ -170,7 +169,7 @@ public class ClearanceManager {
         try {
 
             String clearanceId = InputValidatorUtil.validateStringProperty("Clearance Id", clearance.getId());
-            clearance.setId(clearanceId); 
+            clearance.setId(clearanceId);
 
             DOClearance clearanceExists = clearanceRepository.findById(clearanceId).get();
             String projectId = clearanceExists.getProjectId();
@@ -181,13 +180,13 @@ public class ClearanceManager {
             if (!this.clearanceRepository.isExistsById(clearanceId)) {
                 throw new DoesNotExistException("Clearance does not exists.Clearance Id : " + clearanceId);
             }
-            
+
             if (!this.projectRepository.checkProjectAlive(projectId)) {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
             }
 
             clearance.setProjectId(projectId);
-            clearance.setStatus(DataUtil.QUOTATION_STATE_NEW);
+            clearance.setStatus(clearanceExists.getStatus());
             clearance.setDeleted(false);
 
             DOClearance clearanceCreated = this.clearanceRepository.save(clearance);
@@ -197,7 +196,7 @@ public class ClearanceManager {
         }
 
     }
-    
+
     @Transactional
     public DOClearance setCollecteDate(DOClearanceCollectedDate clearanceCollectedDate) throws CustomException {
         try {
@@ -208,21 +207,21 @@ public class ClearanceManager {
             if (!this.clearanceRepository.isExistsById(clearanceId)) {
                 throw new DoesNotExistException("Clearance does not exists.Clearance Id : " + clearanceId);
             }
-            
+
             long collectedDate = clearanceCollectedDate.getCollectedDate();
-            if(collectedDate<=0){
+            if (collectedDate <= 0) {
                 throw new InvalidInputException("invalid collected date");
             }
-          
+
             DOClearance clearance = clearanceRepository.findById(clearanceId).get();
-            
+
             if (!this.projectRepository.checkProjectAlive(clearance.getProjectId())) {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + clearance.getProjectId());
             }
-            
+
             List<DOStatusCheck> statusChecks = statusCheckRepository.getItemsByProjectIdAndType(clearance.getProjectId(), DataUtil.STATUS_CHECK_TYPE_CLEARANCE);
             for (DOStatusCheck statusCheck : statusChecks) {
-                if(statusCheck.getStatus().equals(DataUtil.STATUS_CHECK_STATE_NEW)){
+                if (statusCheck.getStatus().equals(DataUtil.STATUS_CHECK_STATE_NEW)) {
                     statusCheckRepository.setStatus(DataUtil.STATE_DISCARD, statusCheck.getId());
                 }
             }
@@ -234,6 +233,5 @@ public class ClearanceManager {
         }
 
     }
-
 
 }

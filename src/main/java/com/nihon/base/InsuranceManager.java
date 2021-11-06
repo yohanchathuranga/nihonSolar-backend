@@ -10,8 +10,10 @@ import com.nihon.entity.DOCountRequest;
 import com.nihon.entity.DOListCountResult;
 import com.nihon.entity.DOListRequest;
 import com.nihon.entity.DOInsurance;
+import com.nihon.entity.DOStatusCheck;
 import com.nihon.repository.ProjectRepository;
 import com.nihon.repository.InsuranceRepository;
+import com.nihon.repository.StatusCheckRepository;
 import com.nihon.repository.UserRepository;
 import com.nihon.util.DataUtil;
 import com.nihon.util.DateTimeUtil;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import yohan.exceptions.AlreadyExistException;
 
 /**
@@ -36,13 +39,17 @@ public class InsuranceManager {
     private InsuranceRepository insuranceRepository;
     private ProjectRepository projectRepository;
     private UserRepository userRepository;
+    private StatusCheckRepository statusCheckRepository;
     private final DAODataUtil dataUtil;
 
-    public InsuranceManager(ProjectRepository projectRepository, UserRepository userRepository, DAODataUtil dataUtil) {
+    public InsuranceManager(ProjectRepository projectRepository, UserRepository userRepository, StatusCheckRepository statusCheckRepository, DAODataUtil dataUtil) {
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
+        this.statusCheckRepository = statusCheckRepository;
         this.dataUtil = dataUtil;
     }
+
+    
 
     public List<DOInsurance> listInsurances(DOListRequest listRequest) throws CustomException {
         try {
@@ -87,6 +94,7 @@ public class InsuranceManager {
 
     }
 
+    @Transactional
     public DOInsurance createInsurance(DOInsurance insurance) throws CustomException {
         try {
 
@@ -113,9 +121,19 @@ public class InsuranceManager {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
             }
 
-            if (insuranceRepository.getItemsByProjectId(projectId) != null) {
-                throw new AlreadyExistException("Already exists for Projrct id . Project Id :" + projectId);
-            }
+//            if (insuranceRepository.getItemsByProjectId(projectId) != null) {
+//                throw new AlreadyExistException("Already exists for Projrct id . Project Id :" + projectId);
+//            }
+
+            DOStatusCheck statusCheck = new DOStatusCheck();
+            statusCheck.setProjectId(projectId);
+            statusCheck.setType(DataUtil.STATUS_CHECK_TYPE_INSURANCE);
+            statusCheck.setStatus(DataUtil.STATUS_CHECK_STATE_NEW);
+            statusCheck.setDeleted(false);
+            statusCheck.setId(UUID.randomUUID().toString());
+            statusCheck.setCheckNo(statusCheckRepository.getMaxCheckNoByType(projectId, DataUtil.STATUS_CHECK_TYPE_INSURANCE)+1);
+            statusCheck.setActualDate(DateTimeUtil.getNextYearDayTime(applyDate));
+            statusCheckRepository.save(statusCheck);
 
             String id = UUID.randomUUID().toString();
 
@@ -180,6 +198,7 @@ public class InsuranceManager {
             }
 
             insurance.setProjectId(projectId);
+            insurance.setStatus(insuranceExists.getStatus());
             insurance.setDeleted(false);
 
             DOInsurance insuranceCreated = this.insuranceRepository.save(insurance);

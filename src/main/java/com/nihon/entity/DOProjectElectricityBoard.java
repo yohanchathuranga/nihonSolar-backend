@@ -19,13 +19,19 @@ public class DOProjectElectricityBoard implements Serializable {
     private long estimateDate;
     private long connectionDate;
     private long harmonyDate;
+    private String inspectionRemark;
+    private String settingRemark;
+    private String agreementRemark;
+    private String estimateRemark;
+    private String connectionRemark;
+    private String harmonyRemark;
     private String status;
     private boolean deleted;
 
     public DOProjectElectricityBoard() {
     }
 
-    public DOProjectElectricityBoard(String id, String projectId, long inspectionDate, long settingDate, long agreementDate, long estimateDate, long connectionDate, long harmonyDate, String status, boolean deleted ) {
+    public DOProjectElectricityBoard(String id, String projectId, long inspectionDate, long settingDate, long agreementDate, long estimateDate, long connectionDate, long harmonyDate, String inspectionRemark, String settingRemark, String agreementRemark, String estimateRemark, String connectionRemark, String harmonyRemark, String status) {
         this.id = id;
         this.projectId = projectId;
         this.inspectionDate = inspectionDate;
@@ -34,8 +40,13 @@ public class DOProjectElectricityBoard implements Serializable {
         this.estimateDate = estimateDate;
         this.connectionDate = connectionDate;
         this.harmonyDate = harmonyDate;
+        this.inspectionRemark = inspectionRemark;
+        this.settingRemark = settingRemark;
+        this.agreementRemark = agreementRemark;
+        this.estimateRemark = estimateRemark;
+        this.connectionRemark = connectionRemark;
+        this.harmonyRemark = harmonyRemark;
         this.status = status;
-        this.deleted = deleted;
     }
 
     
@@ -118,6 +129,54 @@ public class DOProjectElectricityBoard implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getInspectionRemark() {
+        return inspectionRemark;
+    }
+
+    public void setInspectionRemark(String inspectionRemark) {
+        this.inspectionRemark = inspectionRemark;
+    }
+
+    public String getSettingRemark() {
+        return settingRemark;
+    }
+
+    public void setSettingRemark(String settingRemark) {
+        this.settingRemark = settingRemark;
+    }
+
+    public String getAgreementRemark() {
+        return agreementRemark;
+    }
+
+    public void setAgreementRemark(String agreementRemark) {
+        this.agreementRemark = agreementRemark;
+    }
+
+    public String getEstimateRemark() {
+        return estimateRemark;
+    }
+
+    public void setEstimateRemark(String estimateRemark) {
+        this.estimateRemark = estimateRemark;
+    }
+
+    public String getConnectionRemark() {
+        return connectionRemark;
+    }
+
+    public void setConnectionRemark(String connectionRemark) {
+        this.connectionRemark = connectionRemark;
+    }
+
+    public String getHarmonyRemark() {
+        return harmonyRemark;
+    }
+
+    public void setHarmonyRemark(String harmonyRemark) {
+        this.harmonyRemark = harmonyRemark;
     }
     
 

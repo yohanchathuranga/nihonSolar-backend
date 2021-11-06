@@ -149,6 +149,7 @@ public class ProjectElectricityBoardManager {
             }
 
             projectElectricityBoard.setProjectId(projectId);
+            projectElectricityBoard.setStatus(projectElectricityBoardExists.getStatus());
             projectElectricityBoard.setDeleted(false);
 
             DOProjectElectricityBoard projectCreated = this.projectElectricityBoardRepository.save(projectElectricityBoard);

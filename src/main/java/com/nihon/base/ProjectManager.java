@@ -63,7 +63,6 @@ public class ProjectManager {
     private IdGenerator idGenerator;
     private ProjectElectricityBoardManager projectElectricityBoardManager;
 
-
     public ProjectManager(UserRepository userRepository, BankLoanRepository bankLoanRepository, ClearanceRepository clearanceRepository, ComplainRepository complainRepository, CustomerFeedbackRepository customerFeedbackRepository, InsuranceRepository insuranceRepository, PaymentRepository paymentRepository, ProjectElectricityBoardRepository projectElectricityBoardRepository, QuotationRepository quotationRepository, ServiceRepository serviceRepository, SiteVisitRepository siteVisitRepository, StatusCheckRepository statusCheckRepository, DAODataUtil dataUtil, IdGenerator idGenerator, ProjectElectricityBoardManager projectElectricityBoardManager) {
         this.userRepository = userRepository;
         this.bankLoanRepository = bankLoanRepository;
@@ -81,7 +80,6 @@ public class ProjectManager {
         this.idGenerator = idGenerator;
         this.projectElectricityBoardManager = projectElectricityBoardManager;
     }
-    
 
     public List<DOProject> listProjects(DOListRequest listRequest) throws CustomException {
         try {
@@ -139,17 +137,19 @@ public class ProjectManager {
                 throw new DoesNotExistException("User does not exists. User Id : " + userId);
             }
 
-            long currentDate = DateTimeUtil.getCurrentTime();
-            project.setCreatedDate(currentDate);
+            if (project.getCreatedDate() <= 0) {
+                long currentDate = DateTimeUtil.getCurrentTime();
+                project.setCreatedDate(currentDate);
+            }
 
-            String id = idGenerator.generateId("project", DateTimeUtil.getCurrentTime());
+            String id = idGenerator.generateId("project", project.getCreatedDate());
 
             project.setId(id);
             project.setStatus(DataUtil.PROJECT_STATE_NEW);
             project.setDeleted(false);
 
             DOProject projectCreated = this.projectRepository.save(project);
-            
+
             DOProjectElectricityBoard projectElectricityBoard = new DOProjectElectricityBoard();
             projectElectricityBoard.setProjectId(id);
             projectElectricityBoardManager.createProjectElectricityBoard(projectElectricityBoard);
@@ -168,6 +168,8 @@ public class ProjectManager {
             if (!this.projectRepository.isExistsById(projectId)) {
                 throw new DoesNotExistException("Project does not exists.Project Id : " + projectId);
             }
+            DOProject projectExists = this.projectRepository.getById(projectId);
+            userRepository.deleteUser(true, projectExists.getUserId());
             bankLoanRepository.deleteBankLoanByProjectId(true, projectId);
             clearanceRepository.deleteByProjectId(true, projectId);
             complainRepository.deleteByProjectId(true, projectId);
@@ -267,7 +269,7 @@ public class ProjectManager {
         }
 
     }
-    
+
     @Transactional
     public DOProject cancel(String projectId) throws CustomException {
         try {
@@ -279,20 +281,19 @@ public class ProjectManager {
             }
 
             DOProject project = projectRepository.findById(projectId).get();
-            
-            bankLoanRepository.deleteBankLoanByProjectId(true, projectId);
-            clearanceRepository.deleteByProjectId(true, projectId);
-            complainRepository.deleteByProjectId(true, projectId);
-            customerFeedbackRepository.deleteByProjectId(true, projectId);
-            insuranceRepository.deleteByProjectId(true, projectId);
-            paymentRepository.deleteByProjectId(true, projectId);
-            projectElectricityBoardRepository.deleteByProjectId(true, projectId);
-            quotationRepository.deleteByProjectId(true, projectId);
-            serviceRepository.deleteByProjectId(true, projectId);
-            siteVisitRepository.deleteByProjectId(true, projectId);
-            statusCheckRepository.deleteByProjectId(true, projectId);
-            this.projectRepository.deleteProject(true, projectId);
-            
+
+//            bankLoanRepository.deleteBankLoanByProjectId(true, projectId);
+//            clearanceRepository.deleteByProjectId(true, projectId);
+//            complainRepository.deleteByProjectId(true, projectId);
+//            customerFeedbackRepository.deleteByProjectId(true, projectId);
+//            insuranceRepository.deleteByProjectId(true, projectId);
+//            paymentRepository.deleteByProjectId(true, projectId);
+//            projectElectricityBoardRepository.deleteByProjectId(true, projectId);
+//            quotationRepository.deleteByProjectId(true, projectId);
+//            serviceRepository.deleteByProjectId(true, projectId);
+//            siteVisitRepository.deleteByProjectId(true, projectId);
+//            statusCheckRepository.deleteByProjectId(true, projectId);
+//            this.projectRepository.deleteProject(true, projectId);
             project.setStatus(DataUtil.PROJECT_STATE_CANCELLED);
 
             DOProject projectCancelled = this.projectRepository.save(project);
@@ -322,7 +323,7 @@ public class ProjectManager {
         }
 
     }
-    
+
     public DOProject approve(String projectId) throws CustomException {
         try {
 
@@ -334,7 +335,7 @@ public class ProjectManager {
 
             List<DOCustomerFeedback> customerFeedbacks = customerFeedbackRepository.getItemsByProjectId(projectId);
             for (DOCustomerFeedback customerFeedback : customerFeedbacks) {
-                if(customerFeedback.getStatus().equals(DataUtil.FEEDBACK_STATE_NEW)){
+                if (customerFeedback.getStatus().equals(DataUtil.FEEDBACK_STATE_NEW)) {
                     customerFeedbackRepository.setStatus(DataUtil.STATE_DISCARD, customerFeedback.getId());
                 }
             }

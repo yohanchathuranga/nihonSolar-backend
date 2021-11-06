@@ -23,6 +23,7 @@ public class DOProject implements Serializable {
     private int systemPrice;
     private int outstandingPayment;
     private long systemInstallationDate;
+    private long systemInstallationDate1;
     private long connectionFileSubmitDate;
     private long customerAppDate;
     private long insuranceAgreementDate;
@@ -31,9 +32,9 @@ public class DOProject implements Serializable {
     private boolean deleted;
 
     public DOProject() {
-    }
+    }    
 
-    public DOProject(String id, String userId, String maketingOfficer, String contactMode, String electricityProvider, int avgElectricityBill, String connectionType, String paymentMethod, double systemVolume, int systemPrice, int outstandingPayment, long systemInstallationDate, long connectionFileSubmitDate, long customerAppDate, long insuranceAgreementDate, long createdDate, String status, boolean deleted) {
+    public DOProject(String id, String userId, String maketingOfficer, String contactMode, String electricityProvider, int avgElectricityBill, String connectionType, String paymentMethod, double systemVolume, int systemPrice, int outstandingPayment, long systemInstallationDate, long systemInstallationDate1, long connectionFileSubmitDate, long customerAppDate, long insuranceAgreementDate, long createdDate, String status) {
         this.id = id;
         this.userId = userId;
         this.maketingOfficer = maketingOfficer;
@@ -46,16 +47,14 @@ public class DOProject implements Serializable {
         this.systemPrice = systemPrice;
         this.outstandingPayment = outstandingPayment;
         this.systemInstallationDate = systemInstallationDate;
+        this.systemInstallationDate1 = systemInstallationDate1;
         this.connectionFileSubmitDate = connectionFileSubmitDate;
         this.customerAppDate = customerAppDate;
         this.insuranceAgreementDate = insuranceAgreementDate;
         this.createdDate = createdDate;
         this.status = status;
-        this.deleted = deleted;
     }
-
     
-
     public String getId() {
         return id;
     }
@@ -199,6 +198,14 @@ public class DOProject implements Serializable {
 
     public void setCreatedDate(long createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public long getSystemInstallationDate1() {
+        return systemInstallationDate1;
+    }
+
+    public void setSystemInstallationDate1(long systemInstallationDate1) {
+        this.systemInstallationDate1 = systemInstallationDate1;
     }
     
 }

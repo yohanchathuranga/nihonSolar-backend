@@ -14,6 +14,7 @@ import java.util.ArrayList;
  */
 public class DOCountRequest {
 
+    boolean distinct;
     ArrayList<DOPropertyFilter> filterData = new ArrayList<>();
 
     public ArrayList<DOPropertyFilter> getFilterData() {
@@ -24,4 +25,11 @@ public class DOCountRequest {
         this.filterData = filterData;
     }
 
+    public boolean isDistinct() {
+        return distinct;
+    }
+
+    public void setDistinct(boolean distinct) {
+        this.distinct = distinct;
+    }
 }

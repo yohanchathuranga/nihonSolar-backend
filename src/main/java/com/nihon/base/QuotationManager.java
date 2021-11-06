@@ -56,7 +56,7 @@ public class QuotationManager {
             if (listRequest.getLimit() <= 0) {
                 listRequest.setLimit(20);
             }
-            final String sql = dataUtil.listFilterData(listRequest.getFilterData(), listRequest.getOrderFields(), listRequest.isDescending(), listRequest.getPage(), listRequest.getLimit(), "quotation");
+            final String sql = dataUtil.listFilterData(listRequest.getFilterData(), listRequest.getOrderFields(), listRequest.isDescending(), listRequest.isDistinct(), listRequest.getPage(), listRequest.getLimit(), "quotation");
 
             return this.quotationRepository.listQuotations(sql);
         } catch (CustomException ex) {
@@ -66,7 +66,7 @@ public class QuotationManager {
 
     public DOListCountResult countQuotations(DOCountRequest countRequest) throws CustomException {
         try {
-            final String sql = dataUtil.countFilterdata(countRequest.getFilterData(), "quotation");
+            final String sql = dataUtil.countFilterdata(countRequest.getFilterData(), countRequest.isDistinct(), "quotation");
             Object o = this.quotationRepository.countQuotations(sql);
             DOListCountResult countResult = new DOListCountResult();
             countResult.setCount(Integer.valueOf(o.toString()));
@@ -101,8 +101,10 @@ public class QuotationManager {
             String userId = InputValidatorUtil.validateStringProperty("User Id", quotation.getUserId());
             quotation.setUserId(userId);
 
-            long currentTime = DateTimeUtil.getCurrentTime();
-            quotation.setIssuedDate(currentTime);
+            if (quotation.getIssuedDate() <= 0) {
+                long currentTime = DateTimeUtil.getCurrentTime();
+                quotation.setIssuedDate(currentTime);
+            }
 
             String sendMode = InputValidatorUtil.validateStringProperty("Send Mode", quotation.getSendMode());
             quotation.setSendMode(sendMode);
@@ -132,23 +134,23 @@ public class QuotationManager {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
             }
 
-            List<DOQuotation> quotations = this.quotationRepository.getItemsByProjectId(quotation.getProjectId());
-            if (quotations.isEmpty()) {
-                long nextWeek = currentTime;
-                DOCustomerFeedback customerFeedback = new DOCustomerFeedback();
-                customerFeedback.setProjectId(projectId);
-                customerFeedback.setCustomerId(userId);
-                customerFeedback.setStatus(DataUtil.FEEDBACK_STATE_NEW);
-                customerFeedback.setDeleted(false);
-                for (int i = 1; i < 5; i++) {
-                    customerFeedback.setId(UUID.randomUUID().toString());
-                    customerFeedback.setWeekNo(i);
-                    customerFeedback.setActualDate(DateTimeUtil.getNextWeekDayTime(nextWeek));
-                    customerFeedbackRepository.save(customerFeedback);
-                    nextWeek = DateTimeUtil.getNextWeekDayTime(nextWeek);
-                }
-
-            }
+//            List<DOQuotation> quotations = this.quotationRepository.getItemsByProjectId(quotation.getProjectId());
+//            if (quotations.isEmpty()) {
+//                long nextWeek = quotation.getIssuedDate();
+//                DOCustomerFeedback customerFeedback = new DOCustomerFeedback();
+//                customerFeedback.setProjectId(projectId);
+//                customerFeedback.setCustomerId(userId);
+//                customerFeedback.setStatus(DataUtil.FEEDBACK_STATE_NEW);
+//                customerFeedback.setDeleted(false);
+//                for (int i = 1; i < 5; i++) {
+//                    customerFeedback.setId(UUID.randomUUID().toString());
+//                    customerFeedback.setWeekNo(i);
+//                    customerFeedback.setActualDate(DateTimeUtil.getNextWeekDayTime(nextWeek));
+//                    customerFeedbackRepository.save(customerFeedback);
+//                    nextWeek = DateTimeUtil.getNextWeekDayTime(nextWeek);
+//                }
+//
+//            }
 
             projectRepository.setStatus(DataUtil.PROJECT_STATE_PENDING, projectId);
             String id = UUID.randomUUID().toString();

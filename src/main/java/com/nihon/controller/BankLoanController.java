@@ -91,10 +91,10 @@ public class BankLoanController {
         }
     }
     
-    @GetMapping("/approve/{id}")
-    public ResponseEntity<DOBankLoan> approveBankLoan(@PathVariable(value = "id") String bankLoanId) {
+    @PostMapping("/approve")
+    public ResponseEntity<DOBankLoan> approveBankLoan(@RequestBody DOBankLoan bankLoan) {
         try {
-            return new ResponseEntity(this.bankLoanManager.approve(bankLoanId), HttpStatus.OK);
+            return new ResponseEntity(this.bankLoanManager.approve(bankLoan), HttpStatus.OK);
         } catch (CustomException ex) {
             return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
         }

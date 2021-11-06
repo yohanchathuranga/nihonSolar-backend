@@ -17,6 +17,7 @@ public class DOBankLoan implements Serializable {
     private String bankName;
     private String branch;
     private long submitDate;
+    private long approvedDate;
     private String officer;
     private String contactNo;
     private String status;
@@ -26,18 +27,21 @@ public class DOBankLoan implements Serializable {
     public DOBankLoan() {
     }
 
-    public DOBankLoan(String id, String projectId, String userId, String bankName, String branch, long submitDate, String officer, String contactNo, String status, boolean deleted) {
+    public DOBankLoan(String id, String projectId, String userId, String bankName, String branch, long submitDate, long approvedDate, String officer, String contactNo, String status, boolean deleted) {
         this.id = id;
         this.projectId = projectId;
         this.userId = userId;
         this.bankName = bankName;
         this.branch = branch;
         this.submitDate = submitDate;
+        this.approvedDate = approvedDate;
         this.officer = officer;
         this.contactNo = contactNo;
         this.status = status;
         this.deleted = deleted;
     }
+
+    
 
     public String getId() {
         return id;
@@ -118,6 +122,14 @@ public class DOBankLoan implements Serializable {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public long getApprovedDate() {
+        return approvedDate;
+    }
+
+    public void setApprovedDate(long approvedDate) {
+        this.approvedDate = approvedDate;
     }
     
 }

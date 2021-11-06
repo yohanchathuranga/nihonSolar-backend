@@ -13,6 +13,8 @@ public class DONotification implements Serializable {
     @Id
     private String id;
     private String userId;
+    private String projectId;
+    private String type;
     private long createdDate;
     private String method;
     private String value;
@@ -23,15 +25,25 @@ public class DONotification implements Serializable {
     public DONotification() {
     }
 
-    public DONotification(String id, String userId, long createdDate, String method, String value, String message, String status, boolean deleted) {
+    public DONotification(String id, String userId, String projectId, String type, long createdDate, String method, String value, String message, String status, boolean deleted) {
         this.id = id;
         this.userId = userId;
+        this.projectId = projectId;
+        this.type = type;
         this.createdDate = createdDate;
         this.method = method;
         this.value = value;
         this.message = message;
         this.status = status;
         this.deleted = deleted;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getId() {
@@ -97,6 +109,14 @@ public class DONotification implements Serializable {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
     }
 
 }

@@ -18,12 +18,13 @@ public class DOService implements Serializable {
     private String remarks;
     private String officer;
     private String status;
+    private long nextServiceDate;
     private boolean deleted;
 
     public DOService() {
     }
 
-    public DOService(String id, String projectId, long date, int serviceNo, String remarks, String officer, String status, boolean deleted) {
+    public DOService(String id, String projectId, long date, int serviceNo, String remarks, String officer, String status, long nextServiceDate) {
         this.id = id;
         this.projectId = projectId;
         this.date = date;
@@ -31,8 +32,10 @@ public class DOService implements Serializable {
         this.remarks = remarks;
         this.officer = officer;
         this.status = status;
-        this.deleted = deleted;
+        this.nextServiceDate = nextServiceDate;
     }
+
+
 
     public String getId() {
         return id;
@@ -97,6 +100,14 @@ public class DOService implements Serializable {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public long getNextServiceDate() {
+        return nextServiceDate;
+    }
+
+    public void setNextServiceDate(long nextServiceDate) {
+        this.nextServiceDate = nextServiceDate;
     }
 
 }

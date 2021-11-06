@@ -18,7 +18,7 @@ public interface DropDownItemRepository extends JpaRepository<DODropDownItem, St
     @Query(value = "update drop_down_items dp set dp.deleted = ?1 where dp.id = ?2", nativeQuery = true)
     int setStatus(boolean deleted, String id);
 
-    @Query(value = "select id,data from drop_down_items where type = ?1", nativeQuery = true)
+    @Query(value = "select id,data from drop_down_items where type = ?1 and deleted = 0", nativeQuery = true)
     List<DODropDownItem.DODropDownListItem> getItemsByType(String type);
 
     @Query(value = "select case when count(dp.id) > 0 then 'true' else 'false' end from drop_down_items dp where dp.id = ?1 and deleted = false", nativeQuery = true)

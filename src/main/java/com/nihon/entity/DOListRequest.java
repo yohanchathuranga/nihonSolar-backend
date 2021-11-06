@@ -12,6 +12,7 @@ public class DOListRequest {
     private int limit;
     private int page;
     boolean descending;
+    boolean distinct;
     ArrayList<DOPropertyFilter> filterData = new ArrayList<>();
     ArrayList<String> orderFields = new ArrayList<>();
 
@@ -55,4 +56,13 @@ public class DOListRequest {
         this.orderFields = orderFields;
     }
 
+    public boolean isDistinct() {
+        return distinct;
+    }
+
+    public void setDistinct(boolean distinct) {
+        this.distinct = distinct;
+    }
+
+    
 }

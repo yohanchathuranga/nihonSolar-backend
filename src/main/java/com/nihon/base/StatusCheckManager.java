@@ -52,7 +52,7 @@ public class StatusCheckManager {
             if (listRequest.getLimit() <= 0) {
                 listRequest.setLimit(20);
             }
-            final String sql = dataUtil.listFilterData(listRequest.getFilterData(), listRequest.getOrderFields(), listRequest.isDescending(), listRequest.getPage(), listRequest.getLimit(), "status_check");
+            final String sql = dataUtil.listFilterData(listRequest.getFilterData(), listRequest.getOrderFields(), listRequest.isDescending(), listRequest.isDistinct(), listRequest.getPage(), listRequest.getLimit(), "status_check");
 
             return this.statusCheckRepository.listStatusChecks(sql);
         } catch (CustomException ex) {
@@ -62,7 +62,7 @@ public class StatusCheckManager {
 
     public DOListCountResult countStatusChecks(DOCountRequest countRequest) throws CustomException {
         try {
-            final String sql = dataUtil.countFilterdata(countRequest.getFilterData(), "status_check");
+            final String sql = dataUtil.countFilterdata(countRequest.getFilterData(), countRequest.isDistinct(), "status_check");
             Object o = this.statusCheckRepository.countStatusChecks(sql);
             DOListCountResult countResult = new DOListCountResult();
             countResult.setCount(Integer.valueOf(o.toString()));
@@ -95,8 +95,8 @@ public class StatusCheckManager {
 
             String type = InputValidatorUtil.validateStringProperty("Type", statusCheck.getType());
             statusCheck.setType(type);
-            
-            if(!type.equals(DataUtil.STATUS_CHECK_TYPE_BANK_LOAN) && !type.equals(DataUtil.STATUS_CHECK_TYPE_CLEARANCE)){
+
+            if (!type.equals(DataUtil.STATUS_CHECK_TYPE_BANK_LOAN) && !type.equals(DataUtil.STATUS_CHECK_TYPE_CLEARANCE) && !type.equals(DataUtil.STATUS_CHECK_TYPE_INSURANCE) && !type.equals(DataUtil.STATUS_CHECK_TYPE_SITE_VISIT) && !type.equals(DataUtil.STATUS_CHECK_TYPE_QUOTATION) && !type.equals(DataUtil.STATUS_CHECK_TYPE_SERVICE) && !type.equals(DataUtil.STATUS_CHECK_TYPE_COMPLAIN)) {
                 throw new InvalidInputException("Invalid type");
             }
 
@@ -105,13 +105,12 @@ public class StatusCheckManager {
                 throw new InvalidInputException("Invalid Ckeck No. Check No:" + checkNo);
             }
             statusCheck.setCheckNo(checkNo);
-            
+
             long actualDate = statusCheck.getActualDate();
             if (actualDate <= 0) {
                 throw new InvalidInputException("Invalid Actual Date. Actual Date:" + actualDate);
             }
             statusCheck.setActualDate(actualDate);
-
 
             if (!this.projectRepository.isExistsById(projectId)) {
                 throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);
@@ -120,11 +119,11 @@ public class StatusCheckManager {
             if (!this.projectRepository.checkProjectAlive(projectId)) {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
             }
-            
-            if(statusCheckRepository.isExistsByProjectIdTypeAndWeekNo(projectId, type, checkNo)){
+
+            if (statusCheckRepository.isExistsByProjectIdTypeAndWeekNo(projectId, type, checkNo)) {
                 throw new AlreadyExistException("Already exists");
             }
-            
+
             String id = UUID.randomUUID().toString();
 
             statusCheck.setId(id);
@@ -161,7 +160,7 @@ public class StatusCheckManager {
             statusCheck.setId(statusCheckId);
 
             DOStatusCheck statusCheckExists = statusCheckRepository.findById(statusCheckId).get();
-            
+
             String projectId = statusCheckExists.getProjectId();
 
 //            String type = InputValidatorUtil.validateStringProperty("Type", statusCheck.getType());
@@ -182,8 +181,6 @@ public class StatusCheckManager {
 //                throw new InvalidInputException("Invalid Actual Date. Actual Date:" + actualDate);
 //            }
 //            statusCheck.setActualDate(actualDate);
-
-
             if (!this.projectRepository.isExistsById(projectId)) {
                 throw new DoesNotExistException("Project does not exists. Project Id : " + projectId);
             }
@@ -204,6 +201,7 @@ public class StatusCheckManager {
             statusCheck.setActualDate(statusCheckExists.getActualDate());
             statusCheck.setCheckNo(statusCheckExists.getCheckNo());;
             statusCheck.setProjectId(projectId);
+            statusCheck.setStatus(statusCheckExists.getStatus());
             statusCheck.setDeleted(false);
 
             DOStatusCheck statusCheckCreated = this.statusCheckRepository.save(statusCheck);
@@ -223,7 +221,7 @@ public class StatusCheckManager {
             if (!this.statusCheckRepository.isExistsById(statusCheckId)) {
                 throw new DoesNotExistException("Bank loan does not exists. Bank loan Id : " + statusCheckId);
             }
-            
+
             long checkedDate = statusChecked.getCheckedDate();
             if (checkedDate <= 0) {
                 throw new InvalidInputException("Invalid Checked Date.");

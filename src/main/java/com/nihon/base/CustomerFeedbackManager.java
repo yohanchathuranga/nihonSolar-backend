@@ -51,7 +51,7 @@ public class CustomerFeedbackManager {
             if (listRequest.getLimit() <= 0) {
                 listRequest.setLimit(20);
             }
-            final String sql = dataUtil.listFilterData(listRequest.getFilterData(), listRequest.getOrderFields(), listRequest.isDescending(), listRequest.getPage(), listRequest.getLimit(), "customer_feedback");
+            final String sql = dataUtil.listFilterData(listRequest.getFilterData(), listRequest.getOrderFields(), listRequest.isDescending(), listRequest.isDistinct(), listRequest.getPage(), listRequest.getLimit(), "customer_feedback");
 
             return this.customerFeedbackRepository.listCustomerFeedbacks(sql);
         } catch (CustomException ex) {
@@ -61,7 +61,7 @@ public class CustomerFeedbackManager {
 
     public DOListCountResult countCustomerFeedbacks(DOCountRequest countRequest) throws CustomException {
         try {
-            final String sql = dataUtil.countFilterdata(countRequest.getFilterData(), "customer_feedback");
+            final String sql = dataUtil.countFilterdata(countRequest.getFilterData(), countRequest.isDistinct(), "customer_feedback");
             Object o = this.customerFeedbackRepository.countCustomerFeedbacks(sql);
             DOListCountResult countResult = new DOListCountResult();
             countResult.setCount(Integer.valueOf(o.toString()));
@@ -97,7 +97,7 @@ public class CustomerFeedbackManager {
 
             int weekNo = customerFeedback.getWeekNo();
             if (weekNo < 1) {
-                throw new InvalidInputException("Invalid Week No.Week No : " + weekNo);
+                weekNo = customerFeedbackRepository.getMaxCheckNoByType(projectId) + 1;
             }
             customerFeedback.setWeekNo(weekNo);
 
@@ -163,7 +163,7 @@ public class CustomerFeedbackManager {
             if (!this.customerFeedbackRepository.isExistsById(customerFeedbackId)) {
                 throw new DoesNotExistException("Customer Feedback does not exists.Customer Feedback Id : " + customerFeedbackId);
             }
-            
+
             DOCustomerFeedback customerFeedbackExists = customerFeedbackRepository.findById(customerFeedbackId).get();
 
             String projectId = customerFeedbackExists.getProjectId();
@@ -181,7 +181,6 @@ public class CustomerFeedbackManager {
 //                throw new InvalidInputException("Invalid Actual Date. Actual Date : " + acctualDate);
 //            }
 //            customerFeedback.setActualDate(acctualDate);          
-
             if (!this.userRepository.isExistsById(customerId)) {
                 throw new DoesNotExistException("Customer does not exists. Customer Id : " + customerId);
             }
@@ -198,6 +197,7 @@ public class CustomerFeedbackManager {
             customerFeedback.setCustomerId(customerId);
             customerFeedback.setActualDate(customerFeedbackExists.getActualDate());
             customerFeedback.setWeekNo(customerFeedbackExists.getWeekNo());
+            customerFeedback.setStatus(customerFeedbackExists.getStatus());
             customerFeedback.setDeleted(false);
 
             DOCustomerFeedback customerFeedbackCreated = this.customerFeedbackRepository.save(customerFeedback);

@@ -27,7 +27,7 @@ public interface CustomerFeedbackRepository extends JpaRepository<DOCustomerFeed
     @Query(value = "select case when count(cf.id) > 0 then 'true' else 'false' end from customer_feedback cf where cf.id = ?1 and deleted = false", nativeQuery = true)
     boolean isExistsById(String id);
 
-    @Query(value = "select * from customer_feedback cf where cf.actual_date >= ?1 and cf.actual_date <= ?2 and cf.status = 'NEW' and deleted = false", nativeQuery = true)
+    @Query(value = "select * from customer_feedback cf where cf.actual_date >= ?1 and cf.actual_date <= ?2 and cf.status = 'NEW' and cf.deleted = false", nativeQuery = true)
     ArrayList<DOCustomerFeedback> getNotificationList(long start, long end);
 
     @Query(value = "select * from customer_feedback where project_id = ?1 and deleted = false", nativeQuery = true)
@@ -40,4 +40,7 @@ public interface CustomerFeedbackRepository extends JpaRepository<DOCustomerFeed
 
     @Query(value = "select case when count(cf.id) > 0 then 'true' else 'false' end from customer_feedback cf where cf.project_id = ?1 and week_no = ?2 and deleted = false", nativeQuery = true)
     boolean isExistsByProjectIdAndWeekNo(String projectId, int weekNo);
+    
+    @Query(value = "select COALESCE(MAX(week_no),0) from customer_feedback where project_id = ?1 and deleted = false", nativeQuery = true)
+    int getMaxCheckNoByType(String projectId);
 }

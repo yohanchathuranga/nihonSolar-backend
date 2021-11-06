@@ -10,8 +10,10 @@ import com.nihon.entity.DOCountRequest;
 import com.nihon.entity.DOListCountResult;
 import com.nihon.entity.DOListRequest;
 import com.nihon.entity.DOService;
+import com.nihon.entity.DOStatusCheck;
 import com.nihon.repository.ProjectRepository;
 import com.nihon.repository.ServiceRepository;
+import com.nihon.repository.StatusCheckRepository;
 import com.nihon.repository.UserRepository;
 import com.nihon.util.DataUtil;
 import com.nihon.util.DateTimeUtil;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -35,11 +38,13 @@ public class ServiceManager {
     private ServiceRepository serviceRepository;
     private ProjectRepository projectRepository;
     private UserRepository userRepository;
+    private StatusCheckRepository statusCheckRepository;
     private final DAODataUtil dataUtil;
 
-    public ServiceManager(ProjectRepository projectRepository, UserRepository userRepository, DAODataUtil dataUtil) {
+    public ServiceManager(ProjectRepository projectRepository, UserRepository userRepository, StatusCheckRepository statusCheckRepository, DAODataUtil dataUtil) {
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
+        this.statusCheckRepository = statusCheckRepository;
         this.dataUtil = dataUtil;
     }
 
@@ -86,6 +91,7 @@ public class ServiceManager {
 
     }
 
+    @Transactional
     public DOService createService(DOService service) throws CustomException {
         try {
 
@@ -100,7 +106,7 @@ public class ServiceManager {
 
             int serviceNo = service.getServiceNo();
             if (serviceNo <= 0) {
-                throw new InvalidInputException("Invalid Service no. Service No : " + serviceNo);
+                serviceNo = serviceRepository.getMaxCheckNo(projectId) + 1;
             }
             service.setServiceNo(serviceNo);
 
@@ -112,13 +118,26 @@ public class ServiceManager {
                 throw new DoesNotExistException("Action not allowed in current state. Project Id : " + projectId);
             }
 
+            long nextServiceDate = DateTimeUtil.getNextYearDayTime(date);
             String id = UUID.randomUUID().toString();
 
             service.setId(id);
+            service.setNextServiceDate(nextServiceDate);
             service.setStatus(DataUtil.STATE_NEW);
             service.setDeleted(false);
-
             DOService serviceCreated = this.serviceRepository.save(service);
+
+            DOStatusCheck statusCheck = new DOStatusCheck();
+            statusCheck.setProjectId(projectId);
+            statusCheck.setType(DataUtil.STATUS_CHECK_TYPE_SERVICE);
+            statusCheck.setStatus(DataUtil.STATUS_CHECK_STATE_NEW);
+            statusCheck.setDeleted(false);
+            statusCheck.setId(UUID.randomUUID().toString());
+            int st = statusCheckRepository.getMaxCheckNoByType(projectId, DataUtil.STATUS_CHECK_TYPE_SERVICE);
+            statusCheck.setCheckNo(statusCheckRepository.getMaxCheckNoByType(projectId, DataUtil.STATUS_CHECK_TYPE_SERVICE) + 1);
+            statusCheck.setActualDate(nextServiceDate);
+            statusCheckRepository.save(statusCheck);
+
             return serviceCreated;
         } catch (CustomException ex) {
             throw ex;
@@ -176,6 +195,7 @@ public class ServiceManager {
 
 //            service.setStatus(DataUtil.QUOTATION_STATE_NEW);
             service.setProjectId(projectId);
+            service.setStatus(serviceExists.getStatus());
             service.setDeleted(false);
 
             DOService serviceCreated = this.serviceRepository.save(service);

@@ -15,6 +15,7 @@ public class DOSiteVisit implements Serializable {
     private String projectId;
     private long visitedDate;
     private String visitBy;
+    private String visitBy2;
     private String roofType;
     private int noOfStories;
     private String remarks;
@@ -24,17 +25,18 @@ public class DOSiteVisit implements Serializable {
     public DOSiteVisit() {
     }
 
-    public DOSiteVisit(String id, String projectId, long visitedDate, String visitBy, String roofType, int noOfStories, String remarks, String status, boolean deleted) {
+    public DOSiteVisit(String id, String projectId, long visitedDate, String visitBy, String visitBy2, String roofType, int noOfStories, String remarks, String status) {
         this.id = id;
         this.projectId = projectId;
         this.visitedDate = visitedDate;
         this.visitBy = visitBy;
+        this.visitBy2 = visitBy2;
         this.roofType = roofType;
         this.noOfStories = noOfStories;
         this.remarks = remarks;
         this.status = status;
-        this.deleted = deleted;
     }
+
 
     public String getId() {
         return id;
@@ -107,6 +109,14 @@ public class DOSiteVisit implements Serializable {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public String getVisitBy2() {
+        return visitBy2;
+    }
+
+    public void setVisitBy2(String visitBy2) {
+        this.visitBy2 = visitBy2;
     }
 
 }
