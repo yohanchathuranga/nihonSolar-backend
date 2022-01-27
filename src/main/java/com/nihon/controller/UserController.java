@@ -7,6 +7,7 @@ import com.nihon.entity.DOForgotPasswordRequest;
 import com.nihon.entity.DOListCountResult;
 import com.nihon.entity.DOListRequest;
 import com.nihon.entity.DOLoginRequest;
+import com.nihon.entity.DOProjectUser;
 import com.nihon.entity.DOResetPasswordRequest;
 import com.nihon.entity.DOUser;
 import yohan.exceptions.CustomException;
@@ -131,6 +132,25 @@ public class UserController {
         try {
             this.userManager.resetPassword(resetPasswordRequest);
             return new ResponseEntity(HttpStatus.OK);
+        } catch (CustomException ex) {
+            return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
+        }
+    }
+    
+    // get all users
+    @PostMapping("/customer_list")
+    public ResponseEntity<List<DOProjectUser>> getCustomerList(@RequestBody DOListRequest listRequest) {
+        try {
+            return new ResponseEntity(this.userManager.listCustomers(listRequest), HttpStatus.OK);
+        } catch (CustomException ex) {
+            return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
+        }
+    }
+    
+    @PostMapping("/customer_count")
+    public ResponseEntity<DOListCountResult> getCustomerCount(@RequestBody DOCountRequest countRequest) {
+        try {
+            return new ResponseEntity(this.userManager.countCustomers(countRequest), HttpStatus.OK);
         } catch (CustomException ex) {
             return new ResponseEntity(ex, HttpStatus.BAD_REQUEST);
         }

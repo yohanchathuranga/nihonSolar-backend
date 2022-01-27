@@ -9,13 +9,18 @@ import com.nihon.dataaccess.DAODataUtil;
 import com.nihon.entity.DOCountRequest;
 import com.nihon.entity.DOListCountResult;
 import com.nihon.entity.DOListRequest;
+import com.nihon.entity.DOMailSender;
+import com.nihon.entity.DONotification;
 import com.nihon.entity.DOSiteVisit;
+import com.nihon.entity.DOStatusCheck;
+import com.nihon.entity.DOUser;
 import com.nihon.repository.ProjectRepository;
 import com.nihon.repository.SiteVisitRepository;
 import com.nihon.repository.UserRepository;
 import com.nihon.util.DataUtil;
 import com.nihon.util.DateTimeUtil;
 import com.nihon.util.InputValidatorUtil;
+import java.util.ArrayList;
 import yohan.exceptions.CustomException;
 import yohan.exceptions.DoesNotExistException;
 import yohan.exceptions.InvalidInputException;
@@ -23,6 +28,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import yohan.exceptions.AlreadyExistException;
 
 /**
@@ -35,10 +41,12 @@ public class SiteVisitManager {
     @Autowired
     private SiteVisitRepository siteVisitRepository;
     private ProjectRepository projectRepository;
+    private NotificationManager notificationManager;
     private final DAODataUtil dataUtil;
 
-    public SiteVisitManager(ProjectRepository projectRepository, UserRepository userRepository, DAODataUtil dataUtil) {
+    public SiteVisitManager(ProjectRepository projectRepository, NotificationManager notificationManager, DAODataUtil dataUtil) {
         this.projectRepository = projectRepository;
+        this.notificationManager = notificationManager;
         this.dataUtil = dataUtil;
     }
 
@@ -85,6 +93,7 @@ public class SiteVisitManager {
 
     }
 
+    @Transactional
     public DOSiteVisit createSiteVisit(DOSiteVisit siteVisit) throws CustomException {
         try {
 
@@ -128,6 +137,7 @@ public class SiteVisitManager {
             siteVisit.setDeleted(false);
 
             DOSiteVisit siteVisitCreated = this.siteVisitRepository.save(siteVisit);
+            notificationManager.notificationSent(projectId);
             return siteVisitCreated;
         } catch (CustomException ex) {
             throw ex;

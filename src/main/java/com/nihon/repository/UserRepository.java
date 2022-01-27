@@ -1,8 +1,10 @@
 package com.nihon.repository;
 
 import com.nihon.customrepositories.UserRepositoryCustom;
+import com.nihon.entity.DOProjectUser;
 import com.nihon.entity.DOUser;
 import java.util.ArrayList;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
@@ -13,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface UserRepository extends JpaRepository<DOUser, String>, UserRepositoryCustom {
 
-    @Query(value = "SELECT o.*,u.first_name as firstName,u.last_name as lastName,o.user_id as userId ,u.email FROM orders o join users u on o.user_id = u.id WHERE o.id = ?1", nativeQuery = true)
-    Or getOrder(int orderId);
+    @Query(value = "SELECT u.id,u.first_name as firstName,u.last_name as lastName,u.project_id as projectId ,u.email,u.contact_no as contactNo,u.address,u.occupation,u.nic,u.status,u.type FROM view_users u where u.first_name like ?1 order by u.project_created_date limit ?2 offset ?3 ", nativeQuery = true)
+    List<DOProjectUser> getCustomers(String like,int limit ,int offset);
 
     public static interface Or {
 

@@ -42,6 +42,6 @@ public interface ProjectRepository extends JpaRepository<DOProject, String>, Pro
     @Query(value = "select case when count(p.id) > 0 then 'true' else 'false' end from project p where p.id = ?1 and p.user_id = ?2 and deleted = false and deleted = false", nativeQuery = true)
     boolean isExistsByIdandUserId(String id, String userId);
     
-    @Query(value = "select case when count(p.id) > 0 then 'true' else 'false' end from project p where p.id = ?1 and deleted = false and status <> 'CANCELLED' and status <> 'COMPLETED'", nativeQuery = true)
+    @Query(value = "select case when count(p.id) > 0 then 'true' else 'false' end from project p where p.id = ?1 and deleted = false and status <> 'CANCELLED'", nativeQuery = true)
     boolean checkProjectAlive(String id);
 }

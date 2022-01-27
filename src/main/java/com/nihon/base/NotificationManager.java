@@ -50,6 +50,8 @@ public class NotificationManager {
     private final EmailSender emailSender;
     private final DAODataUtil dataUtil;
 
+    public static boolean NOTIFICATION_RUNNING = false;
+
     public NotificationManager(ProjectRepository projectRepository, UserRepository userRepository, CustomerFeedbackRepository customerFeedbackRepository, ClearanceRepository clearanceRepository, StatusCheckRepository statusCheckRepository, EmailSender emailSender, DAODataUtil dataUtil) {
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
@@ -197,6 +199,7 @@ public class NotificationManager {
     }
 
     public void processNotification() throws CustomException {
+        NOTIFICATION_RUNNING = true;
         try {
             long currentTime = DateTimeUtil.getCurrentTime();
             long dayStartTime = DateTimeUtil.getDayStartEpochTime(currentTime);
@@ -210,6 +213,7 @@ public class NotificationManager {
             ArrayList<DOStatusCheck> siteVisitCheckList = statusCheckRepository.getNotificationListByType(dayStartTime, dayEndTime, DataUtil.STATUS_CHECK_TYPE_SITE_VISIT);
             ArrayList<DOStatusCheck> complainCheckList = statusCheckRepository.getNotificationListByType(dayStartTime, dayEndTime, DataUtil.STATUS_CHECK_TYPE_COMPLAIN);
             ArrayList<DOStatusCheck> quotationCheckList = statusCheckRepository.getNotificationListByType(dayStartTime, dayEndTime, DataUtil.STATUS_CHECK_TYPE_QUOTATION);
+            ArrayList<DOStatusCheck> siteVisitFollowUpCheckList = statusCheckRepository.getNotificationListByType(dayStartTime, dayEndTime, DataUtil.STATUS_CHECK_TYPE_SITE_VISIT_FOLLOW_UP);
 
             feedbackNotification(feedbackList);
             clearanceNotification(clearanceList);
@@ -219,8 +223,11 @@ public class NotificationManager {
             siteVisitCheckNotification(siteVisitCheckList);
             complainCheckNotification(complainCheckList);
             quotationCheckNotification(quotationCheckList);
+            siteVisitFollowUpCheckNotification(siteVisitFollowUpCheckList);
+            NOTIFICATION_RUNNING = false;
 
         } catch (CustomException ex) {
+            NOTIFICATION_RUNNING = false;
             throw ex;
         }
     }
@@ -261,6 +268,8 @@ public class NotificationManager {
                         i++;
                     }
 
+                    customerFeedbackRepository.setStatus(DataUtil.NOTIFICATION_SENT, customerFeedback.getId());
+
                     DOMailSender mailSender = new DOMailSender();
                     mailSender.setSubject("Customer Feedback Reminder");
                     mailSender.setMessage(message);
@@ -270,7 +279,7 @@ public class NotificationManager {
                     for (DONotification notification : notifications) {
                         notificationRepository.setStatus(DataUtil.NOTIFICATION_STATE_SENT, notification.getId());
                     }
-                    customerFeedbackRepository.setStatus(DataUtil.NOTIFICATION_SENT, customerFeedback.getId());
+
                 }
             }
 
@@ -317,6 +326,8 @@ public class NotificationManager {
                         i++;
                     }
 
+                    statusCheckRepository.setStatus(DataUtil.NOTIFICATION_SENT, clearance.getId());
+
                     DOMailSender mailSender = new DOMailSender();
                     mailSender.setSubject("Clearance Reminder");
                     mailSender.setMessage(message);
@@ -327,7 +338,6 @@ public class NotificationManager {
                         notificationRepository.setStatus(DataUtil.NOTIFICATION_STATE_SENT, notification.getId());
                     }
 
-                    statusCheckRepository.setStatus(DataUtil.NOTIFICATION_SENT, clearance.getId());
                 }
             }
 
@@ -373,8 +383,10 @@ public class NotificationManager {
                         i++;
                     }
 
+                    statusCheckRepository.setStatus(DataUtil.NOTIFICATION_SENT, statusCheck.getId());
+
                     DOMailSender mailSender = new DOMailSender();
-                    mailSender.setSubject("Ststus Check  Reminder");
+                    mailSender.setSubject("Bank Loan Status Check  Reminder");
                     mailSender.setMessage(message);
                     mailSender.setReceiver(emails);
                     emailSender.sendEmail(mailSender);
@@ -382,7 +394,6 @@ public class NotificationManager {
                     for (DONotification notification : notifications) {
                         notificationRepository.setStatus(DataUtil.NOTIFICATION_STATE_SENT, notification.getId());
                     }
-                    statusCheckRepository.setStatus(DataUtil.NOTIFICATION_SENT, statusCheck.getId());
                 }
             }
 
@@ -426,6 +437,8 @@ public class NotificationManager {
                         i++;
                     }
 
+                    statusCheckRepository.setStatus(DataUtil.NOTIFICATION_SENT, insurance.getId());
+
                     DOMailSender mailSender = new DOMailSender();
                     mailSender.setSubject("Insurance Renew Reminder");
                     mailSender.setMessage(message);
@@ -436,7 +449,6 @@ public class NotificationManager {
                         notificationRepository.setStatus(DataUtil.NOTIFICATION_STATE_SENT, notification.getId());
                     }
 
-                    statusCheckRepository.setStatus(DataUtil.NOTIFICATION_SENT, insurance.getId());
                 }
             }
 
@@ -484,11 +496,18 @@ public class NotificationManager {
                         i++;
                     }
 
+                    statusCheckRepository.setStatus(DataUtil.NOTIFICATION_SENT, service.getId());
+
                     for (DONotification notification : notifications) {
                         notificationRepository.setStatus(DataUtil.NOTIFICATION_STATE_SENT, notification.getId());
                     }
 
-                    statusCheckRepository.setStatus(DataUtil.NOTIFICATION_SENT, service.getId());
+                    DOMailSender mailSender = new DOMailSender();
+                    mailSender.setSubject("Service Reminder");
+                    mailSender.setMessage(message);
+                    mailSender.setReceiver(emails);
+                    emailSender.sendEmail(mailSender);
+
                 }
             }
 
@@ -497,7 +516,7 @@ public class NotificationManager {
         }
 
     }
-    
+
     private void siteVisitCheckNotification(ArrayList<DOStatusCheck> siteVisits) throws CustomException {
         try {
             ArrayList<String> roles = new ArrayList();
@@ -536,11 +555,18 @@ public class NotificationManager {
                         i++;
                     }
 
+                    statusCheckRepository.setStatus(DataUtil.NOTIFICATION_SENT, siteVisit.getId());
+
                     for (DONotification notification : notifications) {
                         notificationRepository.setStatus(DataUtil.NOTIFICATION_STATE_SENT, notification.getId());
                     }
 
-                    statusCheckRepository.setStatus(DataUtil.NOTIFICATION_SENT, siteVisit.getId());
+                    DOMailSender mailSender = new DOMailSender();
+                    mailSender.setSubject("Site Visit Reminder");
+                    mailSender.setMessage(message);
+                    mailSender.setReceiver(emails);
+                    emailSender.sendEmail(mailSender);
+
                 }
             }
 
@@ -549,7 +575,7 @@ public class NotificationManager {
         }
 
     }
-    
+
     private void complainCheckNotification(ArrayList<DOStatusCheck> complains) throws CustomException {
         try {
             ArrayList<String> roles = new ArrayList();
@@ -559,7 +585,7 @@ public class NotificationManager {
             roles.add(DataUtil.EMPLOYEE_ROLE_OFFICE_ASSISTANT);
             roles.add(DataUtil.EMPLOYEE_ROLE_ENGINEER);
             roles.add(DataUtil.EMPLOYEE_ROLE_TECHNICAL_OFFICER);
-            
+
             String sql = employeeListQuery(roles);
             List<DOUser> employees = userRepository.listUsers(sql);
 
@@ -590,11 +616,18 @@ public class NotificationManager {
                         i++;
                     }
 
+                    statusCheckRepository.setStatus(DataUtil.NOTIFICATION_SENT, complain.getId());
+
                     for (DONotification notification : notifications) {
                         notificationRepository.setStatus(DataUtil.NOTIFICATION_STATE_SENT, notification.getId());
                     }
 
-                    statusCheckRepository.setStatus(DataUtil.NOTIFICATION_SENT, complain.getId());
+                    DOMailSender mailSender = new DOMailSender();
+                    mailSender.setSubject("Complain Resolve Reminder");
+                    mailSender.setMessage(message);
+                    mailSender.setReceiver(emails);
+                    emailSender.sendEmail(mailSender);
+
                 }
             }
 
@@ -603,12 +636,13 @@ public class NotificationManager {
         }
 
     }
-    
+
     private void quotationCheckNotification(ArrayList<DOStatusCheck> quotations) throws CustomException {
         try {
             ArrayList<String> roles = new ArrayList();
             roles.add(DataUtil.EMPLOYEE_ROLE_ADMINISTRATOR);
             roles.add(DataUtil.EMPLOYEE_ROLE_MARKETING_OFFICER);
+            roles.add(DataUtil.EMPLOYEE_ROLE_MARKETING_MANAGER);
             roles.add(DataUtil.EMPLOYEE_ROLE_OFFICE_ASSISTANT);
             String sql = employeeListQuery(roles);
             List<DOUser> employees = userRepository.listUsers(sql);
@@ -624,7 +658,7 @@ public class NotificationManager {
 
             if (!emails.isEmpty()) {
                 for (DOStatusCheck quotation : quotations) {
-                    String message = "You should send a quotation for the project " + quotation.getProjectId() + " today.";
+                    String message = "You should follow up the customer for the project " + quotation.getProjectId() + " today.";
                     int i = 0;
                     for (String user : users) {
                         DONotification notification = new DONotification();
@@ -640,11 +674,18 @@ public class NotificationManager {
                         i++;
                     }
 
+                    statusCheckRepository.setStatus(DataUtil.NOTIFICATION_SENT, quotation.getId());
+
                     for (DONotification notification : notifications) {
                         notificationRepository.setStatus(DataUtil.NOTIFICATION_STATE_SENT, notification.getId());
                     }
 
-                    statusCheckRepository.setStatus(DataUtil.NOTIFICATION_SENT, quotation   .getId());
+                    DOMailSender mailSender = new DOMailSender();
+                    mailSender.setSubject("Customer Follow Up Reminder");
+                    mailSender.setMessage(message);
+                    mailSender.setReceiver(emails);
+                    emailSender.sendEmail(mailSender);
+
                 }
             }
 
@@ -691,6 +732,114 @@ public class NotificationManager {
 //            System.out.println("Sql : " + sql);
             return sql;
         } catch (Exception ex) {
+            throw ex;
+        }
+
+    }
+
+    private void siteVisitFollowUpCheckNotification(ArrayList<DOStatusCheck> siteVisitFollowUps) throws CustomException {
+        try {
+            ArrayList<String> roles = new ArrayList();
+            roles.add(DataUtil.EMPLOYEE_ROLE_ADMINISTRATOR);
+            roles.add(DataUtil.EMPLOYEE_ROLE_MARKETING_MANAGER);
+            roles.add(DataUtil.EMPLOYEE_ROLE_MARKETING_OFFICER);
+            roles.add(DataUtil.EMPLOYEE_ROLE_TECHNICAL_OFFICER);
+            roles.add(DataUtil.EMPLOYEE_ROLE_ENGINEER);
+            String sql = employeeListQuery(roles);
+            List<DOUser> employees = userRepository.listUsers(sql);
+
+            ArrayList<String> emails = new ArrayList();
+            ArrayList<String> users = new ArrayList();
+            ArrayList<DONotification> notifications = new ArrayList();
+
+            for (DOUser employee : employees) {
+                emails.add(employee.getEmail());
+                users.add(employee.getId());
+            }
+
+            if (!emails.isEmpty()) {
+                for (DOStatusCheck siteVisitFollowUp : siteVisitFollowUps) {
+                    String message = "You should follow up the site visit of the project " + siteVisitFollowUp.getProjectId() + " today.";
+                    int i = 0;
+                    for (String user : users) {
+                        DONotification notification = new DONotification();
+                        notification.setUserId(user);
+                        notification.setProjectId(siteVisitFollowUp.getProjectId());
+                        notification.setType(DataUtil.NOTIFICATION_TYPE_SITE_VISIT_FOLLOW_UP);
+                        notification.setMethod("list");
+                        notification.setMessage(message);
+                        notification.setValue(emails.get(i));
+
+                        notification = createNotification(notification);
+                        notifications.add(notification);
+                        i++;
+                    }
+
+                    statusCheckRepository.setStatus(DataUtil.NOTIFICATION_SENT, siteVisitFollowUp.getId());
+
+                    for (DONotification notification : notifications) {
+                        notificationRepository.setStatus(DataUtil.NOTIFICATION_STATE_SENT, notification.getId());
+                    }
+
+                    DOMailSender mailSender = new DOMailSender();
+                    mailSender.setSubject("Site Visit Follow Up Reminder");
+                    mailSender.setMessage(message);
+                    mailSender.setReceiver(emails);
+                    emailSender.sendEmail(mailSender);
+
+                }
+            }
+
+        } catch (CustomException ex) {
+            throw ex;
+        }
+
+    }
+
+    public void notificationSent(String projectId) throws CustomException {
+        try {
+            ArrayList<String> roles = new ArrayList();
+            roles.add(DataUtil.EMPLOYEE_ROLE_ADMINISTRATOR);
+            String sql = employeeListQuery(roles);
+            List<DOUser> employees = userRepository.listUsers(sql);
+
+            ArrayList<String> emails = new ArrayList();
+            ArrayList<String> users = new ArrayList();
+            ArrayList<DONotification> notifications = new ArrayList();
+
+            for (DOUser employee : employees) {
+                emails.add(employee.getEmail());
+                users.add(employee.getId());
+            }
+
+            if (!emails.isEmpty()) {
+                String message = "You should approve a quotation for the project " + projectId + " today.";
+                int i = 0;
+                for (String user : users) {
+                    DONotification notification = new DONotification();
+                    notification.setUserId(user);
+                    notification.setProjectId(projectId);
+                    notification.setType(DataUtil.NOTIFICATION_TYPE_QUOTATION);
+                    notification.setMethod("list");
+                    notification.setMessage(message);
+                    notification.setValue(emails.get(i));
+
+                    notification = createNotification(notification);
+                    notifications.add(notification);
+                    i++;
+                }
+
+                for (DONotification notification : notifications) {
+                    notificationRepository.setStatus(DataUtil.NOTIFICATION_STATE_SENT, notification.getId());
+                }
+
+                DOMailSender mailSender = new DOMailSender();
+                mailSender.setSubject("Quotation Approve Reminder");
+                mailSender.setMessage(message);
+                mailSender.setReceiver(emails);
+                emailSender.sendEmail(mailSender);
+            }
+        } catch (CustomException ex) {
             throw ex;
         }
 

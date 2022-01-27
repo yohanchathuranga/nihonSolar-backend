@@ -96,7 +96,7 @@ public class StatusCheckManager {
             String type = InputValidatorUtil.validateStringProperty("Type", statusCheck.getType());
             statusCheck.setType(type);
 
-            if (!type.equals(DataUtil.STATUS_CHECK_TYPE_BANK_LOAN) && !type.equals(DataUtil.STATUS_CHECK_TYPE_CLEARANCE) && !type.equals(DataUtil.STATUS_CHECK_TYPE_INSURANCE) && !type.equals(DataUtil.STATUS_CHECK_TYPE_SITE_VISIT) && !type.equals(DataUtil.STATUS_CHECK_TYPE_QUOTATION) && !type.equals(DataUtil.STATUS_CHECK_TYPE_SERVICE) && !type.equals(DataUtil.STATUS_CHECK_TYPE_COMPLAIN)) {
+            if (!type.equals(DataUtil.STATUS_CHECK_TYPE_BANK_LOAN) && !type.equals(DataUtil.STATUS_CHECK_TYPE_CLEARANCE) && !type.equals(DataUtil.STATUS_CHECK_TYPE_INSURANCE) && !type.equals(DataUtil.STATUS_CHECK_TYPE_SITE_VISIT) && !type.equals(DataUtil.STATUS_CHECK_TYPE_QUOTATION) && !type.equals(DataUtil.STATUS_CHECK_TYPE_SERVICE) && !type.equals(DataUtil.STATUS_CHECK_TYPE_COMPLAIN) && !type.equals(DataUtil.STATUS_CHECK_TYPE_SITE_VISIT_FOLLOW_UP)) {
                 throw new InvalidInputException("Invalid type");
             }
 
@@ -201,7 +201,6 @@ public class StatusCheckManager {
             statusCheck.setActualDate(statusCheckExists.getActualDate());
             statusCheck.setCheckNo(statusCheckExists.getCheckNo());;
             statusCheck.setProjectId(projectId);
-            statusCheck.setStatus(statusCheckExists.getStatus());
             statusCheck.setDeleted(false);
 
             DOStatusCheck statusCheckCreated = this.statusCheckRepository.save(statusCheck);

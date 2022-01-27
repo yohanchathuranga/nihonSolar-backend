@@ -1,3 +1,4 @@
+com\nihon\entity\DOProjectQuotation.class
 com\nihon\base\NotificationManager.class
 com\nihon\customrepositories\BankLoanRepositoryImpl.class
 yohan\exceptions\AlreadyExistException.class
@@ -5,6 +6,7 @@ com\nihon\base\PaymentManager.class
 yohan\exceptions\CustomException.class
 com\nihon\customrepositories\ProjectRepositoryImpl.class
 com\nihon\entity\DOInsurance.class
+com\nihon\entity\DOProjectUser.class
 com\nihon\entity\DOUser$DOUserData.class
 yohan\db\mysql\MySqlDbSession.class
 com\nihon\entity\DOCustomerFeedback.class
@@ -55,6 +57,7 @@ com\nihon\customrepositories\PaymentRepositoryImpl.class
 yohan\mysql\db\IDbSession.class
 com\nihon\controller\ProjectElectricityBoardController.class
 com\nihon\entity\DODropDownItem$DODropDownListItem.class
+com\nihon\base\ProjectQuotationManager.class
 com\nihon\base\BankLoanManager.class
 yohan\exceptions\DatabaseException.class
 com\nihon\repository\BankLoanRepository.class
@@ -83,6 +86,7 @@ com\nihon\repository\SiteVisitRepository.class
 com\nihon\repository\ClearanceRepository.class
 com\nihon\customrepositories\ProjectRepositoryCustom.class
 com\nihon\controller\CustomerFeedbackController.class
+com\nihon\customrepositories\ProjectQuotationRepositoryImpl.class
 yohan\commons\filters\DOHealth.class
 com\nihon\controller\StatusCheckController.class
 com\nihon\repository\ComplainRepository.class
@@ -119,7 +123,9 @@ com\nihon\entity\DOStatusCheck.class
 com\nihon\entity\DOService.class
 com\nihon\controller\ProjectController.class
 com\nihon\dataaccess\DAODataUtil.class
+com\nihon\repository\ProjectQuotationRepository.class
 com\nihon\base\DropDownItemManager.class
+com\nihon\controller\ProjectQuotationController.class
 com\nihon\util\IdGenerator.class
 com\nihon\entity\DOSysNextId.class
 com\nihon\entity\DOForgotPassword.class
@@ -135,5 +141,6 @@ com\nihon\customrepositories\PaymentRepositoryCustom.class
 com\nihon\entity\DOClearanceCollectedDate.class
 com\nihon\entity\DOSiteVisit.class
 yohan\exceptions\InvalidInputException.class
+com\nihon\customrepositories\ProjectQuotationRepositoryCustom.class
 com\nihon\customrepositories\QuotationRepositoryCustom.class
 com\nihon\repository\DropDownItemRepository.class

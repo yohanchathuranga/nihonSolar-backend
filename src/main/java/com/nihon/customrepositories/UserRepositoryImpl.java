@@ -5,6 +5,7 @@
  */
 package com.nihon.customrepositories;
 
+import com.nihon.entity.DOProjectUser;
 import com.nihon.entity.DOUser;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -38,4 +39,15 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         return q.getSingleResult();
     }
 
+    @Override
+    public List<DOProjectUser> listCustomers(String query) {
+        Query q = entityManager.createNativeQuery(query, DOProjectUser.class);
+        return q.getResultList();
+    }
+
+    @Override
+    public Object countCustomers(String query) {
+        Query q = entityManager.createNativeQuery(query);
+        return q.getSingleResult();
+    }
 }

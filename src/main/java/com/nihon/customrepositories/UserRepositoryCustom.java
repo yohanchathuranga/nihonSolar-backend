@@ -5,6 +5,7 @@
  */
 package com.nihon.customrepositories;
 
+import com.nihon.entity.DOProjectUser;
 import com.nihon.entity.DOUser;
 import java.util.List;
 
@@ -17,4 +18,8 @@ public interface UserRepositoryCustom {
     List<DOUser> listUsers(String query);
 
     Object countUsers(String query);
+    
+    List<DOProjectUser> listCustomers(String query);
+
+    Object countCustomers(String query);
 }

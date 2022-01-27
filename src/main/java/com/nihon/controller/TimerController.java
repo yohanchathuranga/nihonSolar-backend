@@ -6,6 +6,7 @@
 package com.nihon.controller;
 
 import com.nihon.base.NotificationManager;
+import static com.nihon.base.NotificationManager.NOTIFICATION_RUNNING;
 import yohan.exceptions.CustomException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,7 +22,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 @SpringBootApplication
 @EnableScheduling
 public class TimerController {
-    
+
     private final NotificationManager notificationManager;
 
     @Autowired
@@ -32,8 +33,11 @@ public class TimerController {
     @Scheduled(fixedRate = 300000)
     public void scheduleFixedRateTask() {
         try {
-            System.out.println("Fixed rate task - " + System.currentTimeMillis() / 1000);
-            notificationManager.processNotification();
+            if (!NOTIFICATION_RUNNING) {
+                System.out.println("Fixed rate task - " + System.currentTimeMillis() / 1000);
+                notificationManager.processNotification();
+            }
+
         } catch (CustomException ex) {
             System.out.println(ex);
         }

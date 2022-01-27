@@ -13,6 +13,7 @@ import com.nihon.entity.DOListCountResult;
 import com.nihon.entity.DOListRequest;
 import com.nihon.entity.DOLoginRequest;
 import com.nihon.entity.DOMailSender;
+import com.nihon.entity.DOProjectUser;
 import com.nihon.entity.DOResetPasswordRequest;
 import com.nihon.entity.DOUser;
 import com.nihon.repository.UserRepository;
@@ -30,6 +31,8 @@ import java.util.UUID;
 import javax.xml.bind.DatatypeConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import yohan.commons.filters.DOPropertyFilter;
+import yohan.commons.filters.FilterUtil;
 import yohan.exceptions.LoginFailedException;
 
 /**
@@ -342,6 +345,66 @@ public class UserManager {
 
     private String bytesToHex(byte[] hash) {
         return DatatypeConverter.printHexBinary(hash);
+    }
+
+    public List<DOProjectUser> listCustomers(DOListRequest listRequest) throws CustomException {
+        try {
+            if (listRequest.getPage() <= 0) {
+                listRequest.setPage(1);
+            }
+            if (listRequest.getLimit() <= 0) {
+                listRequest.setLimit(20);
+            }
+//            final String sql = dataUtil.listFilterData(listRequest.getFilterData(), listRequest.getOrderFields(), listRequest.isDescending(), listRequest.getPage(), listRequest.getLimit(), "view_users");
+            final String like = where(listRequest.getFilterData(), listRequest.getOrderFields(), listRequest.isDescending(), listRequest.getPage(), listRequest.getLimit());
+            return this.userRepository.getCustomers(like, listRequest.getLimit(), ((listRequest.getPage() - 1) * listRequest.getLimit()));
+        } catch (CustomException ex) {
+            throw ex;
+        }
+    }
+
+    public DOListCountResult countCustomers(DOCountRequest countRequest) throws CustomException {
+        try {
+            final String sql = dataUtil.countFilterdata(countRequest.getFilterData(), "view_users");
+            Object o = this.userRepository.countCustomers(sql);
+            DOListCountResult countResult = new DOListCountResult();
+            countResult.setCount(Integer.valueOf(o.toString()));
+            return countResult;
+        } catch (CustomException ex) {
+            throw ex;
+        }
+    }
+
+    public String where(List<DOPropertyFilter> filterData, ArrayList<String> orderFields, boolean isDescending, int page, int limit) throws CustomException {
+//        String sql = "SELECT u.id,u.first_name as firstName,u.last_name as lastName,u.project_id as projectId ,u.email,u.contact_no as contactNo,u.address,u.occupation FROM view_users where deleted =0 ";
+//        String whereClause = "";
+//        if (filterData != null && filterData.size() > 0) {
+//            whereClause = FilterUtil.generateWhereClause((ArrayList<DOPropertyFilter>) filterData);
+//        }
+//
+//        if (!whereClause.isEmpty()) {
+//            sql = sql + " and (" + whereClause + ") ";
+//        }
+//
+//        if (orderFields != null && orderFields.size() > 0) {
+//            String orderStr = String.join(",", orderFields);
+//            sql = sql + "order by " + orderStr;
+//            if (isDescending) {
+//                sql += " desc";
+//            }
+//        } else {
+//            sql = sql + "order by id";
+//            if (isDescending) {
+//                sql += " desc";
+//            }
+//        }
+//
+//        sql = sql + " limit " + limit + " offset " + ((page - 1) * limit);
+
+        String like = (String) filterData.get(0).getValue();
+
+        String sql = "%" + like + "%";
+        return sql;
     }
 
 }

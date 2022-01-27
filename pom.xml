@@ -63,6 +63,7 @@
                     <excludeDevtools>true</excludeDevtools>
                 </configuration>
             </plugin>
+            
         </plugins>
     </build>
 </project>

@@ -27,16 +27,16 @@ public interface StatusCheckRepository extends JpaRepository<DOStatusCheck, Stri
     @Query(value = "select case when count(s.id) > 0 then 'true' else 'false' end from status_check s where s.id = ?1 and deleted = false", nativeQuery = true)
     boolean isExistsById(String id);
 
-    @Query(value = "select * from status_check s  where s.actual_date >= ?1 and s.actual_date <= ?2 and s.type ='BANK_LOAN' and s.status = 'NEW' and s.deleted = false", nativeQuery = true)
+    @Query(value = "select * from status_check s  where s.actual_date >= ?1 and s.actual_date < ?2 and s.type ='BANK_LOAN' and s.status = 'NEW' and s.deleted = false", nativeQuery = true)
     ArrayList<DOStatusCheck> getBankLoanNotificationList(long start, long end);
     
-    @Query(value = "select * from status_check s  where s.actual_date >= ?1 and s.actual_date <= ?2 and s.type ='CLEARANCE' and s.status = 'NEW' and s.deleted = false", nativeQuery = true)
+    @Query(value = "select * from status_check s  where s.actual_date >= ?1 and s.actual_date < ?2 and s.type ='CLEARANCE' and s.status = 'NEW' and s.deleted = false", nativeQuery = true)
     ArrayList<DOStatusCheck> getClearancenNotificationList(long start, long end);
 
-    @Query(value = "select * from status_check s  where s.actual_date >= ?1 and s.actual_date <= ?2 and s.type ='INSURANCE' and s.status = 'NEW' and s.deleted = false", nativeQuery = true)
+    @Query(value = "select * from status_check s  where s.actual_date >= ?1 and s.actual_date < ?2 and s.type ='INSURANCE' and s.status = 'NEW' and s.deleted = false", nativeQuery = true)
     ArrayList<DOStatusCheck> getInsuranceNotificationList(long start, long end);
     
-    @Query(value = "select * from status_check s  where s.actual_date >= ?1 and s.actual_date <= ?2 and s.type =?3 and s.status = 'NEW' and s.deleted = false", nativeQuery = true)
+    @Query(value = "select * from status_check s  where s.actual_date >= ?1 and s.actual_date < ?2 and s.type =?3 and s.status = 'NEW' and s.deleted = false", nativeQuery = true)
     ArrayList<DOStatusCheck> getNotificationListByType(long start, long end,String type);
     
     

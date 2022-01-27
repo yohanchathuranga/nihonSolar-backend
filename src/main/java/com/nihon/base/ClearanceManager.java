@@ -226,6 +226,7 @@ public class ClearanceManager {
                 }
             }
             clearance.setCollectDate(collectedDate);
+            clearance.setStatus(DataUtil.STATE_COLLECTED);
             DOClearance clearanceUpdated = this.clearanceRepository.save(clearance);
             return clearanceUpdated;
         } catch (CustomException ex) {

@@ -23,13 +23,18 @@ public class EmailSender {
 
     public void sendEmail(DOMailSender mailSender) {
 
-        SimpleMailMessage msg = new SimpleMailMessage();
-        msg.setTo(mailSender.getReceiver().toArray(new String[1]));
+        try {
+            SimpleMailMessage msg = new SimpleMailMessage();
+            msg.setTo(mailSender.getReceiver().toArray(new String[1]));
 
-        msg.setSubject(mailSender.getSubject());
-        msg.setText(mailSender.getMessage());
+            msg.setSubject(mailSender.getSubject());
+            msg.setText(mailSender.getMessage());
 
-        javaMailSender.send(msg);
+            javaMailSender.send(msg);
+        } catch (Exception e) {
+            System.out.println("Mail sender error: " + e.getMessage());
+            throw e;
+        }
 
     }
 }

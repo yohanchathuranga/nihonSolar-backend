@@ -73,10 +73,10 @@ public class TestController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/order/{id}")
-    public Or userOrder(@PathVariable("id") int id) {
-        return this.userRepository.getOrder(id);
-    }
+//    @PostMapping("/order/{id}")
+//    public Or userOrder(@PathVariable("id") int id) {
+//        return this.userRepository.getOrder(id);
+//    }
 
     @PostMapping("/email/{email}")
     public void getId(@PathVariable("email") String email) {

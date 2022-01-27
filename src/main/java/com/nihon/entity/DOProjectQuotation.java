@@ -62,7 +62,7 @@ public class DOProjectQuotation implements Serializable {
         this.systemVolume = systemVolume;
     }
 
-    public String getInventerType() {
+    public String getInventorType() {
         return inventorType;
     }
 

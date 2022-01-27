@@ -36,6 +36,7 @@ public class DataUtil {
     public static String STATE_NEW = "NEW";
     public static String STATE_CANCELLED = "CANCELLED";
     public static String STATE_DISCARD = "DISCARD";
+    public static String STATE_COLLECTED = "COLLECTED";
 
     public static String NOTIFICATION_STATE_NEW = "NEW";
     public static String NOTIFICATION_STATE_SENT = "SENT";
@@ -50,6 +51,7 @@ public class DataUtil {
     public static String NOTIFICATION_TYPE_QUOTATION = "QUOTATION";
     public static String NOTIFICATION_TYPE_SERVICE = "SERVICE";
     public static String NOTIFICATION_TYPE_COMPLAIN = "COMPLAIN";
+    public static String NOTIFICATION_TYPE_SITE_VISIT_FOLLOW_UP = "SITE_VISIT_FOLLOW_UP";
 
     public static String STATUS_CHECK_STATE_NEW = "NEW";
     public static String STATUS_CHECK_STATE_CHECKED = "CHECKED";
@@ -61,6 +63,7 @@ public class DataUtil {
     public static String STATUS_CHECK_TYPE_QUOTATION = "QUOTATION";
     public static String STATUS_CHECK_TYPE_SERVICE = "SERVICE";
     public static String STATUS_CHECK_TYPE_COMPLAIN = "COMPLAIN";
+    public static String STATUS_CHECK_TYPE_SITE_VISIT_FOLLOW_UP = "SITE_VISIT_FOLLOW_UP";
 
     public static String BANK_LOAN_STATUS_NEW = "NEW";
     public static String BANK_LOAN_STATUS_CANCELLED = "CANCELLED";

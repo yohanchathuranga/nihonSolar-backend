@@ -197,7 +197,6 @@ public class CustomerFeedbackManager {
             customerFeedback.setCustomerId(customerId);
             customerFeedback.setActualDate(customerFeedbackExists.getActualDate());
             customerFeedback.setWeekNo(customerFeedbackExists.getWeekNo());
-            customerFeedback.setStatus(customerFeedbackExists.getStatus());
             customerFeedback.setDeleted(false);
 
             DOCustomerFeedback customerFeedbackCreated = this.customerFeedbackRepository.save(customerFeedback);
